@@ -20,7 +20,6 @@ var plane = {
     propellerIdleSound: getSound("propellerIdle.wav").createInstance(),
     propellerIdleSound2: getSound("propellerIdle.wav").createInstance(),
     propellerIdleSound3: getSound("propellerIdle.wav").createInstance(),
-    takeOffJingleSound: getSound("TakeOffJingle.wav").createInstance(),
     propellerVS: getShader("propeller.vs"),
     propellerPS: getShader("propeller.ps"),
     locked: true,
@@ -186,7 +185,6 @@ function plane_init()
 
 function plane_respawn()
 {
-	plane.takeOffJingleSound.stop()
     plane.onDeck = true
     plane.speed = 0
     plane.position = new Vector3(0, 0, 100)
@@ -247,9 +245,6 @@ function plane_update(dt)
         {
             // Start!
             plane.locked = false
-			plane.takeOffJingleSound.setLoop(false)
-			plane.takeOffJingleSound.setVolume(1.0)
-			plane.takeOffJingleSound.play()
         }
     }
     else 
@@ -280,6 +275,7 @@ function plane_update(dt)
                 plane.rest = Math.min(1, plane.rest + dt)
             if (plane.lift > 0.5)
             {
+                playSound("TakeOffJingle.wav")
                 plane.onDeck = false
 
                 // Translate the position to real position
