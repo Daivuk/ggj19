@@ -10,12 +10,17 @@ init()
 function init()
 {
     skybox_init()
+    carrier_init()
+    plane_init()
+    camera_init()
 }
 
 function update(dt)
 {
     res = Renderer.getResolution()
 
+    plane_update(dt)
+    carrier_update(dt)
     camera_update(dt)
     skybox_update(dt)
 }
