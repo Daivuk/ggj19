@@ -59,6 +59,26 @@ function shots_update(dt)
                 smoke_create(Vector3.lerp(prevPos, shot.position, j))
             }
         }
+
+        // Collision with ground
+        var mapX = Math.floor(shot.position.x + 128)
+        var mapY = Math.floor(shot.position.y + 128)
+        var h = 0
+        if (mapX >= 0 && mapX < 256 && mapY >= 0 && mapY < 256) h = map.hm[mapY * 256 + mapX]
+        if (shot.position.z <= h)
+        {
+            shots.splice(i, 1)
+            --i
+            len = shots.length
+            smoke_create(shot.position.add(new Vector3(0, 0, 0.1)))
+            setTimeout(function(){smoke_create(shot.position.add(new Vector3(0, 0, 0.15)))}, 20)
+            setTimeout(function(){smoke_create(shot.position.add(new Vector3(0, 0, 0.20)))}, 40)
+            setTimeout(function(){smoke_create(shot.position.add(new Vector3(0, 0, 0.25)))}, 60)
+            setTimeout(function(){smoke_create(shot.position.add(new Vector3(0, 0, 0.30)))}, 80)
+            setTimeout(function(){smoke_create(shot.position.add(new Vector3(0, 0, 0.35)))}, 100)
+            continue
+        }
+
         // Apply gravity
         shot.velocity = shot.velocity.add(Vector3.UNIT_Z.mul(-dt * 2)).mul(1 - dt * 0.5) // And friction
         shot.world = Matrix.createWorld(shot.position, camera.front, camera.up)
