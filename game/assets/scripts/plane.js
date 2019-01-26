@@ -13,7 +13,7 @@ function plane_init()
 {
     plane.position = new Vector3(
         carrier.position.x, 
-        carrier.position.y - CARRIER_DECK_LENGTH + PLANE_LENGTH, 
+        carrier.position.y - CARRIER_DECK_LENGTH / 2 + PLANE_LENGTH, 
         carrier.position.z + CARRIER_DECK_HEIGHT + PLANE_GEAR_OFFSET)
 }
 
