@@ -13,7 +13,7 @@ var plane = {
     propellerAngle: 0,
     propellerWorld: new Matrix(),
     propellerVB: null,
-    propellerTexture: getTexture("properller.png"),
+    propellerTexture: getTexture("properller.png"), // Oops, properller
     propellerTexture2: getTexture("properller2.png"),
     propellerTexture3: getTexture("properller3.png"),
     propellerVertCount: 0,
@@ -22,6 +22,7 @@ var plane = {
     propellerIdleSound3: getSound("propellerIdle.wav").createInstance(),
     propellerVS: getShader("propeller.vs"),
     propellerPS: getShader("propeller.ps"),
+    takeOffJingle: getSound("TakeOffJingle.wav").createInstance(),
     locked: true,
     engineRev: 0,
     engineRevTarget: 0,
@@ -218,6 +219,7 @@ function plane_respawn()
     plane.propellerIdleSound.stop()
     plane.propellerIdleSound2.stop()
     plane.propellerIdleSound3.stop()
+    plane.takeOffJingle.stop();
 
     plane.propellerIdleSound.setLoop(true)
     plane.propellerIdleSound.setVolume(0.2)
@@ -230,6 +232,9 @@ function plane_respawn()
     plane.propellerIdleSound3.setLoop(true)
     plane.propellerIdleSound3.setVolume(0)
     plane.propellerIdleSound3.play()
+
+    plane.takeOffJingle.setLoop(false)
+    plane.takeOffJingle.setVolume(.8)
 
     plane.world = Matrix.createRotationX(plane.rest * 10)
     if (plane.onDeck)
@@ -285,7 +290,7 @@ function plane_update(dt)
                 plane.rest = Math.min(1, plane.rest + dt)
             if (plane.lift > 0.5 || plane.position.y > carrier.position.y + CARRIER_DECK_LENGTH / 2)
             {
-                playSound("TakeOffJingle.wav")
+                plane.takeOffJingle.play()
                 plane.onDeck = false
 
                 // Translate the position to real position
