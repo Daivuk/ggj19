@@ -21,10 +21,6 @@ function skybox_init()
     var bg = COL_SKY_BOTTOM.g
     var bb = COL_SKY_BOTTOM.b
 
-    var or = COL_WATER.r
-    var og = COL_WATER.g
-    var ob = COL_WATER.b
-
     var vertexData = new Float32Array([
         // front
         -100, 100, 100, mr, mg, mb,
@@ -34,6 +30,13 @@ function skybox_init()
         100, 100, 0, br, bg, bb,
         100, 100, 100, mr, mg, mb,
 
+        -100, 100, 0, br, bg, bb,
+        -100, 100, -100, br, bg, bb,
+        100, 100, -100, br, bg, bb,
+        -100, 100, 0, br, bg, bb,
+        100, 100, -100, br, bg, bb,
+        100, 100, 0, br, bg, bb,
+
         // right
         100, 100, 100, mr, mg, mb,
         100, 100, 0, br, bg, bb,
@@ -41,6 +44,13 @@ function skybox_init()
         100, 100, 100, mr, mg, mb,
         100, -100, 0, br, bg, bb,
         100, -100, 100, mr, mg, mb,
+
+        100, -100, 0, br, bg, bb,
+        100, -100, -100, br, bg, bb,
+        100, 100, -100, br, bg, bb,
+        100, -100, 0, br, bg, bb,
+        100, 100, -100, br, bg, bb,
+        100, 100, 0, br, bg, bb,
 
         // back
         100, -100, 100, mr, mg, mb,
@@ -50,6 +60,13 @@ function skybox_init()
         -100, -100, 0, br, bg, bb,
         -100, -100, 100, mr, mg, mb,
 
+        100, -100, 0, br, bg, bb,
+        100, -100, -100, br, bg, bb,
+        -100, -100, -100, br, bg, bb,
+        100, -100, 0, br, bg, bb,
+        -100, -100, -100, br, bg, bb,
+        -100, -100, 0, br, bg, bb,
+
         // left
         -100, -100, 100, mr, mg, mb,
         -100, -100, 0, br, bg, bb,
@@ -57,6 +74,13 @@ function skybox_init()
         -100, -100, 100, mr, mg, mb,
         -100, 100, 0, br, bg, bb,
         -100, 100, 100, mr, mg, mb,
+
+        -100, 100, 0, br, bg, bb,
+        -100, 100, -100, br, bg, bb,
+        -100, -100, -100, br, bg, bb,
+        -100, 100, 0, br, bg, bb,
+        -100, -100, -100, br, bg, bb,
+        -100, -100, 0, br, bg, bb,
 
         // Top
         -100, 100, 100, mr, mg, mb,
@@ -83,6 +107,8 @@ function skybox_update(dt)
 
 function skybox_render()
 {
+    Renderer.setView(camera.view)
+    Renderer.setProjection(camera.projection)
     Renderer.setBlendMode(BlendMode.OPAQUE)
     Renderer.setFilterMode(FilterMode.LINEAR)
     Renderer.setBackFaceCull(false)

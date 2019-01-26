@@ -1,15 +1,32 @@
+input float4 inPosition;
 input float2 inTexCoord;
 input float inShade;
 
-Texture0 texture0
+extern float2 fogDist;
+
+Texture0 fogTexture
 {
-    filter = trilinear;
+    filter = nearest;
     repeat = clamp;
+}
+
+Texture1 diffuseTexture
+{
+    filter = nearest;
+    repeat = wrap;
 }
 
 void main()
 {
-    float4 color0 = texture0(inTexCoord);
+    float2 screenCoord = ((float2(inPosition.x, -inPosition.y) / inPosition.z) + 1) / 2;
 
-    oColor = float4(color0.r * inShade, color0.g * inShade, color0.b * inShade, 1);
+    float4 diffuse = diffuseTexture(inTexCoord);
+    float4 fogColor = fogTexture(screenCoord);
+
+    float4 finalColor = float4(diffuse.r * inShade, diffuse.g * inShade, diffuse.b * inShade, 1);
+
+    float depth = inPosition.z;
+    float fogAmount = saturate((depth - fogDist.x) / (fogDist.y - fogDist.x));
+
+    oColor = lerp(finalColor, float4(fogColor.rgb, 1), fogAmount);
 }

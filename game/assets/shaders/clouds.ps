@@ -1,0 +1,14 @@
+input float2 inTexCoord;
+
+Texture0 texture0
+{
+    filter = trilinear;
+    repeat = clamp;
+}
+
+void main()
+{
+    float4 color0 = texture0(inTexCoord);
+
+    oColor = color0;
+}

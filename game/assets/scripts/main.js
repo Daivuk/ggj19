@@ -4,6 +4,7 @@ var COL_WATER = Color.fromHexRGB(0x38607c)
 var COL_CLOUD = Color.fromHexRGB(0xfff8c0)
 
 var res = new Vector2(0, 0)
+var skyboxRT = Texture.createScreenRenderTarget()
 
 init()
 
@@ -13,6 +14,9 @@ function init()
     carrier_init()
     plane_init()
     camera_init()
+    map_init()
+    clouds_init()
+    ocean_init()
 }
 
 function update(dt)
@@ -23,6 +27,9 @@ function update(dt)
     carrier_update(dt)
     camera_update(dt)
     skybox_update(dt)
+    clouds_update(dt)
+    ocean_update(dt)
+    sun_update(dt)
 }
 
 function render()
@@ -30,24 +37,22 @@ function render()
     res = Renderer.getResolution()
 
     Renderer.clearDepth()
-    Renderer.clear(COL_WATER)
     
-    Renderer.setView(camera.view)
-    Renderer.setProjection(camera.projection)
-    
+    Renderer.pushRenderTarget(skyboxRT)
     skybox_render()
+    sun_render()
+    Renderer.popRenderTarget(skyboxRT)
+
+    SpriteBatch.begin()
+    SpriteBatch.drawRect(skyboxRT, new Rect(0, 0, res.x, res.y), Color.WHITE)
+    SpriteBatch.end()
+
+    threeD_setup()
+
     plane_render()
     carrier_render()
-
-    // Renderer.clear(COL_WATER)
-    // SpriteBatch.begin()
-    // SpriteBatch.drawRectWithColors(null, new Rect(0, 0, res.x, res.y * (2/3)), COL_SKY_TOP, COL_SKY_BOTTOM, COL_SKY_BOTTOM, COL_SKY_TOP)
-    // SpriteBatch.drawSprite(null, new Vector2(100, 100), COL_CLOUD, 0, 100);
-    // SpriteBatch.drawSprite(null, new Vector2(150, 90), COL_CLOUD, 0, 100);
-
-    // SpriteBatch.drawSprite(null, new Vector2(500, 120), COL_CLOUD, 0, 100);
-    // SpriteBatch.drawSprite(null, new Vector2(550, 110), COL_CLOUD, 0, 100);
-    // SpriteBatch.end()
+    ocean_render()
+    clouds_render()
 }
 
 function renderUI()
