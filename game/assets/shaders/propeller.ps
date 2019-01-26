@@ -1,0 +1,14 @@
+input float2 inTexCoord;
+
+Texture0 diffuseTexture
+{
+    filter = nearest;
+    repeat = wrap;
+}
+
+void main()
+{
+    float4 diffuse = diffuseTexture(inTexCoord);
+
+    oColor = diffuse;
+}

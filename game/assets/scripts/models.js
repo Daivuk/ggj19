@@ -17,3 +17,16 @@ function calcNormal(verts)
         verts[i + 21] = normal.z
     }
 }
+
+function mirrorVertices(verts)
+{
+    var len = verts.length
+    for (var i = 0; i < len; i += 8 * 3)
+    {
+        verts.push(
+            -verts[i + 0], verts[i + 1], verts[i + 2], 0, 0, 1, verts[i + 6], verts[i + 7],
+            -verts[i + 16], verts[i + 17], verts[i + 18], 0, 0, 1, verts[i + 22], verts[i + 23],
+            -verts[i + 8], verts[i + 9], verts[i + 10], 0, 0, 1, verts[i + 14], verts[i + 15]
+        )
+    }
+}

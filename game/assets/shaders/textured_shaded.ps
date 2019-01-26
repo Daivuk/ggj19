@@ -29,4 +29,7 @@ void main()
     float fogAmount = saturate((depth - fogDist.x) / (fogDist.y - fogDist.x));
 
     oColor = lerp(finalColor, float4(fogColor.rgb, 1), fogAmount);
+    
+    if (diffuse.a < 0.3)
+        discard;
 }

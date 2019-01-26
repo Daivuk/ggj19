@@ -1,8 +1,3 @@
-var COL_SKY_BOTTOM = Color.fromHexRGB(0x8bd0ba)
-var COL_SKY_TOP = Color.fromHexRGB(0x55a894)
-var COL_WATER = Color.fromHexRGB(0x38607c)
-var COL_CLOUD = Color.fromHexRGB(0xfff8c0)
-
 var res = new Vector2(0, 0)
 var skyboxRT = Texture.createScreenRenderTarget()
 
@@ -53,6 +48,7 @@ function render()
     carrier_render()
     ocean_render()
     clouds_render()
+    propeller_render()
 }
 
 function renderUI()

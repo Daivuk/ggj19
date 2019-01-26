@@ -17,8 +17,12 @@ void main()
 
     outTexCoord = inTexCoord;
 
-    float percent = max(dot(normal, sunDir) * 0.75 + 0.25, 0.25);
+    float d = dot(normal, sunDir);
+    // float percent = max( * 0.75 + 0.25, 0.25);
+    float percent = (d + 1) / 2;
+    percent = lerp(0.25, 1, percent);
     percent = 1 - pow(1 - percent, 4);
+    percent *= 1.05; // Gamma boost
 
     outShade = percent;
 }
