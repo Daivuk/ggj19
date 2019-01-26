@@ -18,6 +18,6 @@ function threeD_setup()
     Renderer.setPixelShader(threeD.ps)
 
     threeD.vs.setVector3("sunDir", sun.dir)
-    threeD.ps.setVector2("fogDist", new Vector2(25, 150))
+    threeD.ps.setVector2("fogDist", new Vector2(10, 75))
     Renderer.setTexture(skyboxRT, 0)
 }

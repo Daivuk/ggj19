@@ -1,4 +1,5 @@
 var OCEAN_HEAR_DIST = 10
+var OCEAN_EXTEND = 128 + 200
 
 var ocean = {
     vb: null,
@@ -15,14 +16,14 @@ function adjustOceanVolume()
 
 function ocean_init()
 {
-    var textureScale = 10000 / 100
+    var textureScale = OCEAN_EXTEND / 100
     var vertexData = new Float32Array([
-        -10000, 10000, 0, 1, 1, 1, 0, 0,
-        -10000, -10000, 0, 1, 1, 1, 0, textureScale,
-        10000, -10000, 0, 1, 1, 1, textureScale, textureScale,
-        -10000, 10000, 0, 1, 1, 1, 0, 0,
-        10000, -10000, 0, 1, 1, 1, textureScale, textureScale,
-        10000, 10000, 0, 1, 1, 1, textureScale, 0,
+        -OCEAN_EXTEND, OCEAN_EXTEND, 0, 1, 1, 1, 0, 0,
+        -OCEAN_EXTEND, -OCEAN_EXTEND, 0, 1, 1, 1, 0, textureScale,
+        OCEAN_EXTEND, -OCEAN_EXTEND, 0, 1, 1, 1, textureScale, textureScale,
+        -OCEAN_EXTEND, OCEAN_EXTEND, 0, 1, 1, 1, 0, 0,
+        OCEAN_EXTEND, -OCEAN_EXTEND, 0, 1, 1, 1, textureScale, textureScale,
+        OCEAN_EXTEND, OCEAN_EXTEND, 0, 1, 1, 1, textureScale, 0,
     ])
     ocean.vb = VertexBuffer.createStatic(vertexData)
     ocean.vertCount = vertexData.length / 8

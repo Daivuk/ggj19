@@ -50,6 +50,7 @@ function render()
     threeD_setup()
     plane_render()
     carrier_render()
+    map_render()
     ocean_render()
     clouds_render()
 

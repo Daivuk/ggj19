@@ -46,7 +46,7 @@ function camera_update(dt)
     // camera.up = Vector3.UNIT_Z
 
     camera.view = Matrix.createLookAt(camera.position, camera.position.add(camera.front), camera.up)
-    camera.projection = Matrix.createPerspectiveFieldOfView(Math.PI / (2 + plane.speed / 10), res.x / res.y, 0.1, 1000)
+    camera.projection = Matrix.createPerspectiveFieldOfView(Math.PI / (2 + plane.speed / 10), res.x / res.y, 0.1, 200)
 }
 
 function camera_shake(amount)

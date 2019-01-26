@@ -72,18 +72,18 @@ function clouds_render()
 
 function cloud_renderOverlay()
 {
-    var amount = 0
+    // var amount = 0
 
-    var len = clouds.length
-    var sizeSqr = CLOUD_FOG_SIZE * CLOUD_FOG_SIZE
-    for (var i = 0; i < len; ++i)
-    {
-        var cloud = clouds[i]
-        var dist = Vector2.distanceSquared(cloud.position, camera.position)
-        amount = Math.min(1, Math.max(amount, 1 - (dist / sizeSqr)))
-    }
+    // var len = clouds.length
+    // var sizeSqr = CLOUD_FOG_SIZE * CLOUD_FOG_SIZE
+    // for (var i = 0; i < len; ++i)
+    // {
+    //     var cloud = clouds[i]
+    //     var dist = Vector2.distanceSquared(cloud.position, camera.position)
+    //     amount = Math.min(1, Math.max(amount, 1 - (dist / sizeSqr)))
+    // }
 
-    SpriteBatch.begin()
-    SpriteBatch.drawRect(null, new Rect(0, 0, res.x, res.y), Color.lerp(Color.TRANSPARENT, CLOUD_COLOR, amount))
-    SpriteBatch.end()
+    // SpriteBatch.begin()
+    // SpriteBatch.drawRect(null, new Rect(0, 0, res.x, res.y), Color.lerp(Color.TRANSPARENT, CLOUD_COLOR, amount))
+    // SpriteBatch.end()
 }

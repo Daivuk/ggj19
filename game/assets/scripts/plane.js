@@ -391,6 +391,7 @@ function plane_update(dt)
             var dir = new Vector3(plane.world._21, plane.world._22, plane.world._23)
             var pos = new Vector3(plane.world._41, plane.world._42, plane.world._43)
             shot_create(pos.add(right.mul((plane.nextShot - 0.5) * PLANE_WIDTH / 2)).add(dir.mul(PLANE_LENGTH / 2 * 0.85)), plane.velocity.add(dir.normalize().mul(SHOT_VEL)), plane, 1)
+            plane.yaw += (plane.nextShot - 0.5) * 25
 
             plane.nextShot = (plane.nextShot + 1) % 2
             camera_shake(0.01)
@@ -398,9 +399,13 @@ function plane_update(dt)
     }
 
     // Detect crash
-    if (plane.position.z <= 0)
+    var mapX = Math.floor(plane.position.x + 128)
+    var mapY = Math.floor(plane.position.y + 128)
+    var h = 0
+    if (mapX >= 0 && mapX < 256 && mapY >= 0 && mapY < 256) h = map.hm[mapY * 256 + mapX]
+    if (plane.position.z <= h)
     {
-        // Kaboom
+        // Kaboom   
         plane_crash()
     }
 }
