@@ -24,7 +24,11 @@ var plane = {
     propellerPS: getShader("propeller.ps"),
     locked: true,
     engineRev: 0,
-    engineRevTarget: 0
+    engineRevTarget: 0,
+    lift: 0,
+    roll: 0,
+    pitch: 0,
+    yaw: 0
 }
 
 var PLANE_WIDTH = 0.6
@@ -191,10 +195,102 @@ function plane_init()
     plane.propellerIdleSound3.setLoop(true)
     plane.propellerIdleSound3.setVolume(0)
     plane.propellerIdleSound3.play()
+
+    plane.world = Matrix.createRotationX(plane.rest * 10)
+    if (plane.onDeck)
+    {
+        plane.world = plane.world.mul(Matrix.createWorld(plane.position, plane.front, plane.up).mul(carrier.world))
+    }
+    else
+    {
+        plane.world = plane.world.mul(Matrix.createWorld(plane.position, plane.front, plane.up))
+    }
 }
 
 function plane_update(dt)
 {
+    var lthumb = GamePad.getLeftThumb(0)
+    var rthumb = GamePad.getRightThumb(0)
+
+    if (plane.locked)
+    {
+        if (rthumb.y < -0.8)
+        {
+            // Start!
+            plane.locked = false
+        }
+    }
+    else
+    {
+        plane.engineRevTarget = -rthumb.y + 2
+        plane.engineRev += (plane.engineRevTarget - plane.engineRev) * dt
+        plane.propellerIdleSound.setPitch((plane.engineRev - 1.5 - 1) * 0.25 + 1)
+
+        plane.propellerIdleSound2.setPitch((plane.engineRev - 1.5 - 1) * 0.55 + 1)
+        plane.propellerIdleSound2.setVolume((plane.engineRev - 1.5) * 2)
+        
+        plane.propellerIdleSound3.setPitch((plane.engineRev - 1.5 - 1) * 2 + 1)
+        plane.propellerIdleSound3.setVolume((plane.engineRev - 2.5) * 2)
+
+        plane.velocity = plane.velocity.add(plane.front.mul(plane.engineRev * dt))
+        plane.speed = plane.velocity.length()
+        plane.speed -= plane.speed * dt
+        plane.velocity = plane.velocity.normalize().mul(plane.speed)
+        plane.position = plane.position.add(plane.velocity.mul(dt))
+
+        plane.lift = plane.speed - 1.9
+
+        if (plane.onDeck)
+        {
+            if (plane.lift > -0.5)
+                plane.rest = Math.max(0, plane.rest - dt)
+            else
+                plane.rest = Math.min(1, plane.rest + dt)
+            if (plane.lift > 0.5)
+            {
+                plane.onDeck = false
+
+                // Translate the position to real position
+                plane.world = Matrix.createRotationX(plane.rest * 10)
+                plane.world = plane.world.mul(Matrix.createWorld(plane.position, plane.front, plane.up).mul(carrier.world))
+                plane.position = new Vector3(plane.world._41, plane.world._42, plane.world._43)
+                plane.front = new Vector3(plane.world._21, plane.world._22, plane.world._23)
+                plane.up = new Vector3(plane.world._31, plane.world._32, plane.world._33)
+            }
+        }
+        else
+        {
+            plane.rest = Math.max(0, plane.rest - dt)
+            var right = plane.front.cross(plane.up)
+
+            // Gravity
+            plane.velocity = plane.velocity.add(Vector3.UNIT_Z.mul(-dt / 2))
+
+            // Lift
+            plane.velocity = plane.velocity.add(plane.up.mul((plane.lift + 1) * dt / 2))
+
+            // Roll
+            plane.roll = plane.roll + (lthumb.x * 45 * plane.speed - plane.roll) * dt * 2
+            plane.up = plane.up.transform(Matrix.createFromAxisAngle(plane.front, -plane.roll * dt))
+
+            // Pitch
+            plane.pitch = plane.pitch + (lthumb.y * 30 * plane.speed - plane.pitch) * dt * 2
+            var pitchTransform = Matrix.createFromAxisAngle(right, -plane.pitch * dt)
+            plane.front = plane.front.transform(pitchTransform).normalize()
+
+            // Yaw
+            plane.yaw = plane.yaw + (rthumb.x * 30 * plane.speed - plane.yaw) * dt * 2
+            plane.front = plane.front.transform(Matrix.createFromAxisAngle(plane.up, plane.yaw * dt))
+            
+            // Plane always try to point toward velocity
+            plane.front = plane.front.add(plane.velocity.normalize().sub(plane.front).mul(dt * 5)).normalize()
+
+            // Reajust up based on the new front
+            right = plane.front.cross(plane.up)
+            plane.up = right.cross(plane.front).normalize()
+        }
+    }
+
     plane.propellerAngle += dt * -500 * (plane.engineRev + 1)
     plane.propellerAngle %= 360
     plane.world = Matrix.createRotationX(plane.rest * 10)
@@ -209,27 +305,6 @@ function plane_update(dt)
     plane.propellerWorld = Matrix.createTranslation(new Vector3(0, PLANE_LENGTH / 2 + 0.01, 0)).mul(
         Matrix.createRotationY(plane.propellerAngle)).mul(
         plane.world)
-
-    if (plane.locked)
-    {
-        if (GamePad.getRightThumb(0).y < -0.8)
-        {
-            // Start!
-            plane.locked = false
-        }
-    }
-    else
-    {
-        plane.engineRevTarget = -GamePad.getRightThumb(0).y + 2
-        plane.engineRev += (plane.engineRevTarget - plane.engineRev) * dt
-        plane.propellerIdleSound.setPitch((plane.engineRev - 1.5 - 1) * 0.25 + 1)
-
-        plane.propellerIdleSound2.setPitch((plane.engineRev - 1.5 - 1) * 0.55 + 1)
-        plane.propellerIdleSound2.setVolume((plane.engineRev - 1.5) * 2)
-        
-        plane.propellerIdleSound3.setPitch((plane.engineRev - 1.5 - 1) * 2 + 1)
-        plane.propellerIdleSound3.setVolume((plane.engineRev - 2.5) * 2)
-    }
 }
 
 function plane_render()
