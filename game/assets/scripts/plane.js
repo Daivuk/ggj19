@@ -161,11 +161,9 @@ function plane_init()
         -PLANE_HULL_WIDTH / 2 - PLANE_DROP, PLANE_LENGTH / 2 * 0.85, -PLANE_HULL_WIDTH / 4 - PLANE_DROP / 2, 0, 0, 1, hullU, hullV,
     ]
 
-    // Mirror it all
     mirrorVertices(verts)
-
-    // Calculate normals
     calcNormal(verts)
+    normalsToColor(verts)
 
     var vertexData = new Float32Array(verts)
     plane.vb = VertexBuffer.createStatic(vertexData)
@@ -310,7 +308,6 @@ function plane_update(dt)
 function plane_render()
 {
     Renderer.setWorld(plane.world)
-    threeD.vs.setVector3("world", plane.world)
     Renderer.setVertexBuffer(plane.vb)
     Renderer.setTexture(plane.texture, 1)
     Renderer.draw(plane.vertCount)
@@ -327,7 +324,6 @@ function propeller_render()
     Renderer.setVertexShader(plane.propellerVS)
     Renderer.setPixelShader(plane.propellerPS)
     Renderer.setWorld(plane.propellerWorld)
-    plane.propellerVS.setVector3("world", plane.propellerWorld)
 
     Renderer.setVertexBuffer(plane.propellerVB)
     Renderer.setTexture(plane.engineRev > 1.5 ? (plane.engineRev > 2.5 ? plane.propellerTexture3 : plane.propellerTexture2) : plane.propellerTexture, 0)

@@ -30,3 +30,20 @@ function mirrorVertices(verts)
         )
     }
 }
+
+function normalsToColor(verts)
+{
+    var len = verts.length
+    for (var i = 0; i < len; i += 8)
+    {
+        var d = sun.dir.dot(new Vector3(verts[i + 3], verts[i + 4], verts[i + 5]))
+        var percent = (d + 1) / 2
+        percent = Math.pow(percent, 4)
+        percent = 0.25 + (1.25 - 0.25) * percent
+        percent = Math.min(1, Math.max(0, percent))
+
+        verts[i + 3] = percent
+        verts[i + 4] = percent
+        verts[i + 5] = percent
+    }
+}

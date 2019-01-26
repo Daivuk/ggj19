@@ -17,12 +17,12 @@ function ocean_init()
 {
     var textureScale = 10000 / 100
     var vertexData = new Float32Array([
-        -10000, 10000, 0, 0, 0, 1, 0, 0,
-        -10000, -10000, 0, 0, 0, 1, 0, textureScale,
-        10000, -10000, 0, 0, 0, 1, textureScale, textureScale,
-        -10000, 10000, 0, 0, 0, 1, 0, 0,
-        10000, -10000, 0, 0, 0, 1, textureScale, textureScale,
-        10000, 10000, 0, 0, 0, 1, textureScale, 0,
+        -10000, 10000, 0, 1, 1, 1, 0, 0,
+        -10000, -10000, 0, 1, 1, 1, 0, textureScale,
+        10000, -10000, 0, 1, 1, 1, textureScale, textureScale,
+        -10000, 10000, 0, 1, 1, 1, 0, 0,
+        10000, -10000, 0, 1, 1, 1, textureScale, textureScale,
+        10000, 10000, 0, 1, 1, 1, textureScale, 0,
     ])
     ocean.vb = VertexBuffer.createStatic(vertexData)
     ocean.vertCount = vertexData.length / 8
@@ -41,7 +41,6 @@ function ocean_update(dt)
 function ocean_render()
 {
     Renderer.setWorld(ocean.world)
-    threeD.vs.setVector3("world", ocean.world)
     Renderer.setVertexBuffer(ocean.vb)
     Renderer.setTexture(ocean.texture, 1)
     Renderer.draw(ocean.vertCount)

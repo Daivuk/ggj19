@@ -166,6 +166,7 @@ function carrier_init()
 
     // Calculate normals
     calcNormal(verts)
+    normalsToColor(verts)
 
     var vertexData = new Float32Array(verts)
     carrier.vb = VertexBuffer.createStatic(vertexData)
@@ -190,7 +191,6 @@ function carrier_update(dt)
 function carrier_render()
 {
     Renderer.setWorld(carrier.world)
-    threeD.vs.setVector3("world", carrier.world)
     Renderer.setVertexBuffer(carrier.vb)
     Renderer.setTexture(carrier.texture, 1)
     Renderer.draw(carrier.vertCount)

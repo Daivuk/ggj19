@@ -9,12 +9,12 @@ function cloud_create(position)
 {
     var type = Random.getNext(4)
     var vertBuffer = new Float32Array([
-        -CLOUD_SIZE, 0, CLOUD_SIZE / 2, 0, 0, 1, 0, type / 4,
-        -CLOUD_SIZE, 0, -CLOUD_SIZE / 2, 0, 0, 1, 0, type / 4 + 0.25,
-        CLOUD_SIZE, 0, -CLOUD_SIZE / 2, 0, 0, 1, 1, type / 4 + 0.25,
-        -CLOUD_SIZE, 0, CLOUD_SIZE / 2, 0, 0, 1, 0, type / 4,
-        CLOUD_SIZE, 0, -CLOUD_SIZE / 2, 0, 0, 1, 1, type / 4 + 0.25,
-        CLOUD_SIZE, 0, CLOUD_SIZE / 2, 0, 0, 1, 1, type / 4,
+        -CLOUD_SIZE, 0, CLOUD_SIZE / 2, 1, 1, 1, 0, type / 4,
+        -CLOUD_SIZE, 0, -CLOUD_SIZE / 2, 1, 1, 1, 0, type / 4 + 0.25,
+        CLOUD_SIZE, 0, -CLOUD_SIZE / 2, 1, 1, 1, 1, type / 4 + 0.25,
+        -CLOUD_SIZE, 0, CLOUD_SIZE / 2, 1, 1, 1, 0, type / 4,
+        CLOUD_SIZE, 0, -CLOUD_SIZE / 2, 1, 1, 1, 1, type / 4 + 0.25,
+        CLOUD_SIZE, 0, CLOUD_SIZE / 2, 1, 1, 1, 1, type / 4,
     ])
     var cloud = {
         position: new Vector3(position),
@@ -59,7 +59,6 @@ function clouds_render()
     {
         var cloud = clouds[i]
         Renderer.setWorld(cloud.world)
-        threeD.vs.setVector3("world", cloud.world)
         Renderer.setVertexBuffer(cloud.vb)
         Renderer.draw(cloud.vertCount)
     }

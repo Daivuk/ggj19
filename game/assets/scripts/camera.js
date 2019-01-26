@@ -1,4 +1,4 @@
-var CAMERA_ADAPT_SPEED = 5
+var CAMERA_ADAPT_SPEED = 4
 
 var camera = {
     position: new Vector3(0, 0, 0),
@@ -18,7 +18,7 @@ function camera_init()
     var planeFront = new Vector3(plane.world._21, plane.world._22, plane.world._23)
     var planeUp = new Vector3(plane.world._31, plane.world._32, plane.world._33)
 
-    camera.position = planePos.sub(planeFront.mul(0.15)).add(planeUp.mul(0.35))
+    camera.position = planePos.sub(planeFront.mul(0.25)).add(planeUp.mul(0.35))
     camera.target = camera.position.add(planeFront)
     camera.upTarget = camera.position.add(planeUp)
 }
@@ -29,7 +29,7 @@ function camera_update(dt)
     var planeFront = new Vector3(plane.world._21, plane.world._22, plane.world._23)
     var planeUp = new Vector3(plane.world._31, plane.world._32, plane.world._33)
 
-    var targetPosition = planePos.sub(planeFront.mul(0.15)).add(planeUp.mul(0.35))
+    var targetPosition = planePos.sub(planeFront.mul(0.25)).add(planeUp.mul(0.35))
     var targetTarget = targetPosition.add(planeFront)
     var targetUpTarget = targetPosition.add(planeUp)
 
