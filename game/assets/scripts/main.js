@@ -29,11 +29,15 @@ function render()
 {
     res = Renderer.getResolution()
 
+    Renderer.clearDepth()
     Renderer.clear(COL_WATER)
+    
     Renderer.setView(camera.view)
     Renderer.setProjection(camera.projection)
     
     skybox_render()
+    plane_render()
+    carrier_render()
 
     // Renderer.clear(COL_WATER)
     // SpriteBatch.begin()

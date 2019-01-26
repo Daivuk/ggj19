@@ -3,7 +3,7 @@ var skybox = {
     world: new Matrix(),
     vs: getShader("skybox.vs"),
     ps: getShader("skybox.ps"),
-    vertCount: 36
+    vertCount: 0
 }
 
 function skybox_init()
@@ -73,6 +73,7 @@ function skybox_init()
         0, 0, 100, tr, tg, tb,
     ])
     skybox.vb = VertexBuffer.createStatic(vertexData)
+    skybox.vertCount = vertexData.length / 6
 }
 
 function skybox_update(dt)
