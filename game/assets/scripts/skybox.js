@@ -1,5 +1,5 @@
-var COL_SKY_BOTTOM = Color.fromHexRGB(0x8bd0ba).mul(1.25)
-var COL_SKY_TOP = Color.fromHexRGB(0x55a894).mul(0.75)
+var COL_SKY_BOTTOM = Color.fromHexRGB(0x8bd0ba)//.mul(1.25)
+var COL_SKY_TOP = Color.fromHexRGB(0x55a894)//.mul(0.75)
 
 var skybox = {
     vb: null,

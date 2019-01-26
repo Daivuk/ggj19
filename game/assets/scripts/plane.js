@@ -33,7 +33,8 @@ var plane = {
     nextShot: 0,
     speed: 0,
     upgrades: {},
-    cash: 0
+    cash: 0,
+    takeOffDelay: 1
 }
 
 var PLANE_WIDTH = 0.6
@@ -187,6 +188,7 @@ function plane_init()
 
 function plane_respawn()
 {
+    plane.takeOffDelay = 1
     plane.onDeck = true
     plane.speed = 0
     plane.position = new Vector3(0, 0, 100)
@@ -296,6 +298,7 @@ function plane_update(dt)
         }
         else
         {
+            plane.takeOffDelay -= dt
             plane.rest = Math.max(0, plane.rest - dt)
             var right = plane.front.cross(plane.up)
 
@@ -331,7 +334,7 @@ function plane_update(dt)
             var invCarrier = carrier.world.invert()
             var prevLocal = prevPos.sub(carrier.position).transform(invCarrier)
             var local = plane.position.sub(carrier.position).transform(invCarrier)
-            if (local.z <= CARRIER_DECK_HEIGHT + PLANE_GEAR_OFFSET)
+            if (local.z <= CARRIER_DECK_HEIGHT + PLANE_GEAR_OFFSET && plane.takeOffDelay <= 0)
             {
                 if (local.x > -CARRIER_DECK_WIDTH / 2 &&
                     local.x < CARRIER_DECK_WIDTH / 2 &&
@@ -382,7 +385,7 @@ function plane_update(dt)
             var right = plane.front.cross(plane.up).normalize()
             var dir = new Vector3(plane.world._21, plane.world._22, plane.world._23)
             var pos = new Vector3(plane.world._41, plane.world._42, plane.world._43)
-            shot_create(pos.add(right.mul((plane.nextShot - 0.5) * PLANE_WIDTH / 2)).add(dir.mul(PLANE_LENGTH / 2 * 0.85)), plane.velocity.add(dir.normalize().mul(SHOT_VEL)), plane)
+            shot_create(pos.add(right.mul((plane.nextShot - 0.5) * PLANE_WIDTH / 2)).add(dir.mul(PLANE_LENGTH / 2 * 0.85)), plane.velocity.add(dir.normalize().mul(SHOT_VEL)), plane, 1)
 
             plane.nextShot = (plane.nextShot + 1) % 2
             camera_shake(0.01)

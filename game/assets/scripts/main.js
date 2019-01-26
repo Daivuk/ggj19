@@ -28,6 +28,7 @@ function update(dt)
     ocean_update(dt)
     sun_update(dt)
     shots_update(dt)
+    smokes_update(dt)
 }
 
 function render()
@@ -53,6 +54,7 @@ function render()
     clouds_render()
 
     // Specials
+    smokes_render()
     shots_render()
     propeller_render()
 

@@ -22,14 +22,23 @@ function shots_init()
     shotsVertCount = vertBuffer.length / 2
 }
 
-function shot_create(position, vel, from)
+function shot_create(position, vel, from, precision)
 {
     var shot = {
         position: new Vector3(position),
         velocity: new Vector3(vel),
         from: from,
-        world: new Matrix()
+        world: new Matrix(),
+        life: 2
     }
+
+    var speed = shot.velocity.length()
+    var dir = shot.velocity.normalize()
+    var right = dir.cross(Vector3.UNIT_Z)
+    var up = right.cross(dir)
+    dir = dir.transform(Matrix.createFromAxisAngle(up, Random.randNumber(-precision, precision)))
+    dir = dir.transform(Matrix.createFromAxisAngle(right, Random.randNumber(-precision, precision)))
+    shot.velocity = dir.mul(speed)
 
     shots.push(shot)
 }
@@ -40,8 +49,26 @@ function shots_update(dt)
     for (var i = 0; i < len; ++i)
     {
         var shot = shots[i]
+        var prevPos = shot.position
         shot.position = shot.position.add(shot.velocity.mul(dt))
+        if (shot.life > 1.7)
+        {
+            var step = Math.max(0.3, (2 - shot.life) * 10)
+            for (var j = step; j <= 1; j += step)
+            {
+                smoke_create(Vector3.lerp(prevPos, shot.position, j))
+            }
+        }
+        // Apply gravity
+        shot.velocity = shot.velocity.add(Vector3.UNIT_Z.mul(-dt * 2)).mul(1 - dt * 0.5) // And friction
         shot.world = Matrix.createWorld(shot.position, camera.front, camera.up)
+        shot.life -= dt
+        if (shot.life <= 0)
+        {
+            shots.splice(i, 1)
+            --i
+            len = shots.length
+        }
     }
 }
 
@@ -55,11 +82,6 @@ function shots_render()
     Renderer.setPrimitiveMode(PrimitiveMode.TRIANGLE_LIST)
     Renderer.setVertexShader(plane.propellerVS)
     Renderer.setPixelShader(plane.propellerPS)
-
-    Renderer.setVertexBuffer(plane.propellerVB)
-    Renderer.setTexture(plane.engineRev > 1.5 ? (plane.engineRev > 2.5 ? plane.propellerTexture3 : plane.propellerTexture2) : plane.propellerTexture, 0)
-    Renderer.draw(plane.propellerVertCount)
-
     Renderer.setTexture(SHOT_TEXTURE, 0)
 
     var len = shots.length
