@@ -10,7 +10,7 @@ var ocean = {
 
 function adjustOceanVolume()
 {
-    ocean.sound.setVolume(Math.min(1, Math.max(0, 1 - camera.position.z / OCEAN_HEAR_DIST)) * 0.4)
+    ocean.sound.setVolume(Math.min(1, Math.max(0, 1 - camera.position.z / OCEAN_HEAR_DIST)) * 0.4) 
 }
 
 function ocean_init()

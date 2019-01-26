@@ -252,7 +252,7 @@ function plane_update(dt)
 			plane.takeOffJingleSound.play()
         }
     }
-    else
+    else 
     {
         plane.engineRevTarget = -rthumb.y + 2
         plane.engineRev += (plane.engineRevTarget - plane.engineRev) * dt
