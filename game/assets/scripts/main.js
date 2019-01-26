@@ -13,6 +13,7 @@ function init()
     map_init()
     clouds_init()
     ocean_init()
+    shots_init()
 }
 
 function update(dt)
@@ -26,6 +27,7 @@ function update(dt)
     clouds_update(dt)
     ocean_update(dt)
     sun_update(dt)
+    shots_update(dt)
 }
 
 function render()
@@ -43,12 +45,15 @@ function render()
     SpriteBatch.drawRect(skyboxRT, new Rect(0, 0, res.x, res.y), Color.WHITE)
     SpriteBatch.end()
 
+    // Standard 3D
     threeD_setup()
-
     plane_render()
     carrier_render()
     ocean_render()
     clouds_render()
+
+    // Specials
+    shots_render()
     propeller_render()
 
     cloud_renderOverlay()

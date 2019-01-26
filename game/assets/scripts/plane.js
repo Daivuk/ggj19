@@ -377,6 +377,12 @@ function plane_update(dt)
             plane.shootDelay = PLANE_SHOT_INTERNAL
             playSound("shot.wav", 2, (plane.nextShot - 0.5) * 0.1, 1.5)
             setTimeout(function(){playSound("shot.wav", 1.5, 0, 1)}, PLANE_SHOT_INTERNAL * 1.1 * 1000)
+            
+            var right = plane.front.cross(plane.up).normalize()
+            var dir = new Vector3(plane.world._21, plane.world._22, plane.world._23)
+            var pos = new Vector3(plane.world._41, plane.world._42, plane.world._43)
+            shot_create(pos.add(right.mul((plane.nextShot - 0.5) * PLANE_WIDTH / 2)).add(dir.mul(PLANE_LENGTH / 2 * 0.85)), plane.velocity.add(dir.normalize().mul(SHOT_VEL)), plane)
+
             plane.nextShot = (plane.nextShot + 1) % 2
             camera_shake(0.01)
         }
