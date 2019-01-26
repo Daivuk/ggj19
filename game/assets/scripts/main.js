@@ -14,6 +14,7 @@ function init()
     clouds_init()
     ocean_init()
     shots_init()
+    trees_init()
 }
 
 function update(dt)
@@ -29,6 +30,7 @@ function update(dt)
     sun_update(dt)
     shots_update(dt)
     smokes_update(dt)
+    trees_update(dt)
 }
 
 function render()
@@ -50,9 +52,10 @@ function render()
     threeD_setup()
     plane_render()
     carrier_render()
+    trees_render()
+    clouds_render()
     map_render()
     ocean_render()
-    clouds_render()
 
     // Specials
     smokes_render()

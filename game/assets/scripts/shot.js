@@ -71,11 +71,11 @@ function shots_update(dt)
             --i
             len = shots.length
             smoke_create(shot.position.add(new Vector3(0, 0, 0.1)))
-            setTimeout(function(){smoke_create(shot.position.add(new Vector3(0, 0, 0.15)))}, 20)
-            setTimeout(function(){smoke_create(shot.position.add(new Vector3(0, 0, 0.20)))}, 40)
-            setTimeout(function(){smoke_create(shot.position.add(new Vector3(0, 0, 0.25)))}, 60)
-            setTimeout(function(){smoke_create(shot.position.add(new Vector3(0, 0, 0.30)))}, 80)
-            setTimeout(function(){smoke_create(shot.position.add(new Vector3(0, 0, 0.35)))}, 100)
+            setTimeout(function(){smoke_create(shot.position.add(new Vector3(0, 0, 0.15)), 2)}, 20)
+            setTimeout(function(){smoke_create(shot.position.add(new Vector3(0, 0, 0.20)), 2.5)}, 40)
+            setTimeout(function(){smoke_create(shot.position.add(new Vector3(0, 0, 0.25)), 3)}, 60)
+            setTimeout(function(){smoke_create(shot.position.add(new Vector3(0, 0, 0.30)), 3.5)}, 80)
+            setTimeout(function(){smoke_create(shot.position.add(new Vector3(0, 0, 0.35)), 4)}, 100)
             continue
         }
 
