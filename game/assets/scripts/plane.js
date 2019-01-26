@@ -14,11 +14,17 @@ var plane = {
     propellerWorld: new Matrix(),
     propellerVB: null,
     propellerTexture: getTexture("properller.png"),
+    propellerTexture2: getTexture("properller2.png"),
+    propellerTexture3: getTexture("properller3.png"),
     propellerVertCount: 0,
     propellerIdleSound: getSound("propellerIdle.wav").createInstance(),
+    propellerIdleSound2: getSound("propellerIdle.wav").createInstance(),
+    propellerIdleSound3: getSound("propellerIdle.wav").createInstance(),
     propellerVS: getShader("propeller.vs"),
     propellerPS: getShader("propeller.ps"),
-    engineRev: 0
+    locked: true,
+    engineRev: 0,
+    engineRevTarget: 0
 }
 
 var PLANE_WIDTH = 0.6
@@ -177,11 +183,19 @@ function plane_init()
     plane.propellerIdleSound.setLoop(true)
     plane.propellerIdleSound.setVolume(0.4)
     plane.propellerIdleSound.play()
+
+    plane.propellerIdleSound2.setLoop(true)
+    plane.propellerIdleSound2.setVolume(0)
+    plane.propellerIdleSound2.play()
+
+    plane.propellerIdleSound3.setLoop(true)
+    plane.propellerIdleSound3.setVolume(0)
+    plane.propellerIdleSound3.play()
 }
 
 function plane_update(dt)
 {
-    plane.propellerAngle += dt * -500
+    plane.propellerAngle += dt * -500 * (plane.engineRev + 1)
     plane.propellerAngle %= 360
     plane.world = Matrix.createRotationX(plane.rest * 10)
     if (plane.onDeck)
@@ -195,6 +209,27 @@ function plane_update(dt)
     plane.propellerWorld = Matrix.createTranslation(new Vector3(0, PLANE_LENGTH / 2 + 0.01, 0)).mul(
         Matrix.createRotationY(plane.propellerAngle)).mul(
         plane.world)
+
+    if (plane.locked)
+    {
+        if (GamePad.getRightThumb(0).y < -0.8)
+        {
+            // Start!
+            plane.locked = false
+        }
+    }
+    else
+    {
+        plane.engineRevTarget = -GamePad.getRightThumb(0).y + 2
+        plane.engineRev += (plane.engineRevTarget - plane.engineRev) * dt
+        plane.propellerIdleSound.setPitch((plane.engineRev - 1.5 - 1) * 0.25 + 1)
+
+        plane.propellerIdleSound2.setPitch((plane.engineRev - 1.5 - 1) * 0.55 + 1)
+        plane.propellerIdleSound2.setVolume((plane.engineRev - 1.5) * 2)
+        
+        plane.propellerIdleSound3.setPitch((plane.engineRev - 1.5 - 1) * 2 + 1)
+        plane.propellerIdleSound3.setVolume((plane.engineRev - 2.5) * 2)
+    }
 }
 
 function plane_render()
@@ -220,6 +255,6 @@ function propeller_render()
     plane.propellerVS.setVector3("world", plane.propellerWorld)
 
     Renderer.setVertexBuffer(plane.propellerVB)
-    Renderer.setTexture(plane.propellerTexture, 0)
+    Renderer.setTexture(plane.engineRev > 1.5 ? (plane.engineRev > 2.5 ? plane.propellerTexture3 : plane.propellerTexture2) : plane.propellerTexture, 0)
     Renderer.draw(plane.propellerVertCount)
 }
