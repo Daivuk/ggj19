@@ -31,7 +31,9 @@ var plane = {
     yaw: 0,
     shootDelay: 0,
     nextShot: 0,
-    speed: 0
+    speed: 0,
+    upgrades: {},
+    cash: 0
 }
 
 var PLANE_WIDTH = 0.6
@@ -211,6 +213,10 @@ function plane_respawn()
         -CARRIER_DECK_LENGTH / 2 + PLANE_LENGTH, 
         CARRIER_DECK_HEIGHT + PLANE_GEAR_OFFSET)
 
+    plane.propellerIdleSound.stop()
+    plane.propellerIdleSound2.stop()
+    plane.propellerIdleSound3.stop()
+
     plane.propellerIdleSound.setLoop(true)
     plane.propellerIdleSound.setVolume(0.4)
     plane.propellerIdleSound.play()
@@ -249,6 +255,7 @@ function plane_update(dt)
     }
     else
     {
+        var prevPos = new Vector3(plane.position)
         plane.engineRevTarget = -rthumb.y + 2
         plane.engineRev += (plane.engineRevTarget - plane.engineRev) * dt
         plane.propellerIdleSound.setPitch((plane.engineRev - 1.5 - 1) * 0.25 + 1)
@@ -259,9 +266,10 @@ function plane_update(dt)
         plane.propellerIdleSound3.setPitch((plane.engineRev - 1.5 - 1) * 2 + 1)
         plane.propellerIdleSound3.setVolume((plane.engineRev - 2.5) * 2)
 
-        plane.velocity = plane.velocity.add(plane.front.mul(plane.engineRev * dt))
+        plane.velocity = plane.velocity.add(plane.front.mul(plane.engineRev * dt * 0.5))
         plane.speed = plane.velocity.length()
-        plane.speed -= plane.speed * dt
+        plane.speed -= plane.speed * dt * 0.5
+
         plane.velocity = plane.velocity.normalize().mul(plane.speed)
         plane.position = plane.position.add(plane.velocity.mul(dt))
 
@@ -273,7 +281,7 @@ function plane_update(dt)
                 plane.rest = Math.max(0, plane.rest - dt)
             else
                 plane.rest = Math.min(1, plane.rest + dt)
-            if (plane.lift > 0.5)
+            if (plane.lift > 0.5 || plane.position.y > carrier.position.y + CARRIER_DECK_LENGTH / 2)
             {
                 plane.onDeck = false
 
@@ -304,6 +312,8 @@ function plane_update(dt)
             plane.pitch = plane.pitch + (lthumb.y * 30 * plane.speed - plane.pitch) * dt * 2
             var pitchTransform = Matrix.createFromAxisAngle(right, -plane.pitch * dt)
             plane.front = plane.front.transform(pitchTransform).normalize()
+            // Transform the energy to the velocity also
+            plane.velocity = plane.velocity.transform(Matrix.createFromAxisAngle(right, -plane.pitch * dt * 0.5))
 
             // Yaw
             plane.yaw = plane.yaw + (rthumb.x * 30 * plane.speed - plane.yaw) * dt * 2
@@ -315,6 +325,32 @@ function plane_update(dt)
             // Reajust up based on the new front
             right = plane.front.cross(plane.up)
             plane.up = right.cross(plane.front).normalize()
+
+            // Are we landing?
+            var invCarrier = carrier.world.invert()
+            var prevLocal = prevPos.sub(carrier.position).transform(invCarrier)
+            var local = plane.position.sub(carrier.position).transform(invCarrier)
+            if (local.z <= CARRIER_DECK_HEIGHT + PLANE_GEAR_OFFSET)
+            {
+                if (local.x > -CARRIER_DECK_WIDTH / 2 &&
+                    local.x < CARRIER_DECK_WIDTH / 2 &&
+                    local.y > -CARRIER_DECK_LENGTH / 2 &&
+                    local.y < CARRIER_DECK_LENGTH / 2)
+                {
+                    if (plane.speed < 2 && prevLocal.z > CARRIER_DECK_HEIGHT + PLANE_GEAR_OFFSET)
+                    {
+                        if (Math.abs(plane.front.z) < 0.6)
+                        {
+                            playSound("landed.wav", 4)
+                            plane_respawn()
+                        }
+                    }
+                    else
+                    {
+                        plane_crash()
+                    }
+                }
+            }
         }
     }
 
@@ -350,8 +386,16 @@ function plane_update(dt)
     if (plane.position.z <= 0)
     {
         // Kaboom
-        plane_respawn()
+        plane_crash()
     }
+}
+
+function plane_crash()
+{
+    playSound("crash.wav")
+    plane.upgrades = {}
+    plane.cash = 0
+    plane_respawn()
 }
 
 function plane_render()
