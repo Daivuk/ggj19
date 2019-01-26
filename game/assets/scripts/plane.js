@@ -38,22 +38,16 @@ var PLANE_WIDTH = 0.6
 var PLANE_DROP = 0.03
 var PLANE_LENGTH = 0.5
 var PLANE_HULL_WIDTH = 0.07
-var PLANE_TAIL_WIDTH = 0.04
+var PLANE_TAIL_WIDTH = 0.02
 var PLANE_GEAR_OFFSET = 0.1
-var PLANE_FIN_LENGTH = 0.15
-var PLANE_FIN_WIDTH = 0.3
+var PLANE_FIN_LENGTH = 0.08
+var PLANE_FIN_WIDTH = 0.2
 var PLANE_TAIL_MID = (PLANE_HULL_WIDTH + PLANE_TAIL_WIDTH) / 2
 var PROP_SIZE = 0.1
 var PLANE_SHOT_INTERNAL = 0.1
 
 function plane_init()
 {
-    // Local position on deck
-    plane.position = new Vector3(
-        0, 
-        -CARRIER_DECK_LENGTH / 2 + PLANE_LENGTH, 
-        CARRIER_DECK_HEIGHT + PLANE_GEAR_OFFSET)
-
     var hullU = 16 / 100
     var hullV = 76 / 100
 
@@ -185,6 +179,37 @@ function plane_init()
     vertexData = new Float32Array(verts)
     plane.propellerVB = VertexBuffer.createStatic(vertexData)
     plane.propellerVertCount = vertexData.length / 5
+
+    plane_respawn()
+}
+
+function plane_respawn()
+{
+    plane.onDeck = true
+    plane.speed = 0
+    plane.position = new Vector3(0, 0, 100)
+    plane.velocity = new Vector3(0, 0, 0)
+    plane.front = new Vector3(0, 1, 0)
+    plane.up = new Vector3(0, 0, 1)
+    plane.onDeck = true
+    plane.wingFold = 1
+    plane.rest = 1
+    plane.locked = true
+    plane.engineRev = 0
+    plane.engineRevTarget = 0
+    plane.lift = 0
+    plane.roll = 0
+    plane.pitch = 0
+    plane.yaw = 0
+    plane.shootDelay = 0
+    plane.nextShot = 0
+    plane.speed = 0
+
+    // Local position on deck
+    plane.position = new Vector3(
+        0, 
+        -CARRIER_DECK_LENGTH / 2 + PLANE_LENGTH, 
+        CARRIER_DECK_HEIGHT + PLANE_GEAR_OFFSET)
 
     plane.propellerIdleSound.setLoop(true)
     plane.propellerIdleSound.setVolume(0.4)
@@ -319,6 +344,13 @@ function plane_update(dt)
             plane.nextShot = (plane.nextShot + 1) % 2
             camera_shake(0.01)
         }
+    }
+
+    // Detect crash
+    if (plane.position.z <= 0)
+    {
+        // Kaboom
+        plane_respawn()
     }
 }
 

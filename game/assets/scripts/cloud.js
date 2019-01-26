@@ -3,7 +3,7 @@ var CLOUD_FOG_TEXTURE = getTexture("cloudFog.png")
 var CLOUD_ALT = 25
 var CLOUD_SIZE = 8
 var CLOUD_COLOR = Color.fromHexRGB(0xfff8c0)
-var CLOUD_FOG_SIZE = 3
+var CLOUD_FOG_SIZE = 2
 
 var clouds = []
 
@@ -11,12 +11,12 @@ function cloud_create(position)
 {
     var type = Random.getNext(4)
     var vertBuffer = new Float32Array([
-        -CLOUD_SIZE, 0, CLOUD_SIZE / 2, 1, 1, 1, 0, type / 4,
+        -CLOUD_SIZE, 0,  CLOUD_SIZE / 2, 1, 1, 1, 0, type / 4,
         -CLOUD_SIZE, 0, -CLOUD_SIZE / 2, 1, 1, 1, 0, type / 4 + 0.25,
-        CLOUD_SIZE, 0, -CLOUD_SIZE / 2, 1, 1, 1, 1, type / 4 + 0.25,
-        -CLOUD_SIZE, 0, CLOUD_SIZE / 2, 1, 1, 1, 0, type / 4,
-        CLOUD_SIZE, 0, -CLOUD_SIZE / 2, 1, 1, 1, 1, type / 4 + 0.25,
-        CLOUD_SIZE, 0, CLOUD_SIZE / 2, 1, 1, 1, 1, type / 4,
+         CLOUD_SIZE, 0, -CLOUD_SIZE / 2, 1, 1, 1, 1, type / 4 + 0.25,
+        -CLOUD_SIZE, 0,  CLOUD_SIZE / 2, 1, 1, 1, 0, type / 4,
+         CLOUD_SIZE, 0, -CLOUD_SIZE / 2, 1, 1, 1, 1, type / 4 + 0.25,
+         CLOUD_SIZE, 0,  CLOUD_SIZE / 2, 1, 1, 1, 1, type / 4,
     ])
     var cloud = {
         position: new Vector3(position),
@@ -36,7 +36,7 @@ function clouds_init()
         {
             if (file.readUInt8() > 50)
             {
-                cloud_create(new Vector3(x - 128, y - 128, CLOUD_ALT))
+                cloud_create(new Vector3(x - 128, y - 128, Random.randNumber(CLOUD_ALT - 1, CLOUD_ALT + 1)))
             }
         }
     }
