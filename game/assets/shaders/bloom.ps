@@ -1,0 +1,15 @@
+input float2 inTexCoord;
+input float4 inColor;
+
+Texture0 texture0
+{
+    filter = trilinear;
+    repeat = clamp;
+}
+
+void main()
+{
+    float4 color0 = texture0(inTexCoord);
+
+    oColor = saturate((color0 * inColor - .85) / 0.15);
+}

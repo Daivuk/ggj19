@@ -1,6 +1,9 @@
 var res = new Vector2(0, 0)
 var skyboxRT = Texture.createScreenRenderTarget()
+var bloomRT = Texture.createScreenRenderTarget()
+var screenRT = Texture.createScreenRenderTarget()
 var font = getFont("font.fnt")
+var bloomPS = getShader("bloom.ps")
 
 init()
 
@@ -37,13 +40,15 @@ function render()
 {
     res = Renderer.getResolution()
 
+    Renderer.clear(Color.BLACK)
     Renderer.clearDepth()
     
     Renderer.pushRenderTarget(skyboxRT)
     skybox_render()
     sun_render()
-    Renderer.popRenderTarget(skyboxRT)
+    Renderer.popRenderTarget()
 
+    Renderer.pushRenderTarget(screenRT)
     SpriteBatch.begin()
     SpriteBatch.drawRect(skyboxRT, new Rect(0, 0, res.x, res.y), Color.WHITE)
     SpriteBatch.end()
@@ -63,6 +68,22 @@ function render()
     propeller_render()
 
     cloud_renderOverlay()
+    Renderer.popRenderTarget()
+
+    Renderer.pushRenderTarget(bloomRT)
+    SpriteBatch.begin(Matrix.IDENTITY, bloomPS)
+    Renderer.setBlendMode(BlendMode.OPAQUE)
+    SpriteBatch.drawRect(screenRT, new Rect(0, 0, res.x, res.y), Color.WHITE)
+    SpriteBatch.end()
+    Renderer.popRenderTarget()
+
+    bloomRT.blur()
+    SpriteBatch.begin()
+    Renderer.setBlendMode(BlendMode.OPAQUE)
+    SpriteBatch.drawRect(screenRT, new Rect(0, 0, res.x, res.y), Color.WHITE)
+    Renderer.setBlendMode(BlendMode.ADD)
+    SpriteBatch.drawRect(bloomRT, new Rect(0, 0, res.x, res.y), Color.WHITE)
+    SpriteBatch.end()
 
     SpriteBatch.begin()
     SpriteBatch.drawText(font, "Speed: " + plane.speed, new Vector2(10, 20), Vector2.TOP_LEFT, new Color(0.8, 0, 0, 1));
