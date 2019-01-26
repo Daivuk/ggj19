@@ -51,6 +51,8 @@ function render()
     clouds_render()
     propeller_render()
 
+    cloud_renderOverlay()
+
     SpriteBatch.begin()
     SpriteBatch.drawText(font, "Speed: " + plane.speed, new Vector2(10, 20), Vector2.TOP_LEFT, new Color(0.8, 0, 0, 1));
     SpriteBatch.drawText(font, "Lift: " + plane.lift, new Vector2(10, 40), Vector2.TOP_LEFT, new Color(0.8, 0, 0, 1));

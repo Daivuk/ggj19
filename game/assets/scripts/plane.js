@@ -28,7 +28,10 @@ var plane = {
     lift: 0,
     roll: 0,
     pitch: 0,
-    yaw: 0
+    yaw: 0,
+    shootDelay: 0,
+    nextShot: 0,
+    speed: 0
 }
 
 var PLANE_WIDTH = 0.6
@@ -41,6 +44,7 @@ var PLANE_FIN_LENGTH = 0.15
 var PLANE_FIN_WIDTH = 0.3
 var PLANE_TAIL_MID = (PLANE_HULL_WIDTH + PLANE_TAIL_WIDTH) / 2
 var PROP_SIZE = 0.1
+var PLANE_SHOT_INTERNAL = 0.1
 
 function plane_init()
 {
@@ -303,6 +307,19 @@ function plane_update(dt)
     plane.propellerWorld = Matrix.createTranslation(new Vector3(0, PLANE_LENGTH / 2 + 0.01, 0)).mul(
         Matrix.createRotationY(plane.propellerAngle)).mul(
         plane.world)
+
+    plane.shootDelay -= dt
+    if (GamePad.isDown(0, Button.RIGHT_TRIGGER))
+    {
+        if (plane.shootDelay <= 0)
+        {
+            plane.shootDelay = PLANE_SHOT_INTERNAL
+            playSound("shot.wav", 2, (plane.nextShot - 0.5) * 0.1, 1.5)
+            setTimeout(function(){playSound("shot.wav", 1.5, 0, 1)}, PLANE_SHOT_INTERNAL * 1.1 * 1000)
+            plane.nextShot = (plane.nextShot + 1) % 2
+            camera_shake(0.01)
+        }
+    }
 }
 
 function plane_render()

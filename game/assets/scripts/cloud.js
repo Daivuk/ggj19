@@ -2,6 +2,8 @@ var CLOUD_TEXTURE = getTexture("clouds.png")
 var CLOUD_FOG_TEXTURE = getTexture("cloudFog.png")
 var CLOUD_ALT = 25
 var CLOUD_SIZE = 8
+var CLOUD_COLOR = Color.fromHexRGB(0xfff8c0)
+var CLOUD_FOG_SIZE = 3
 
 var clouds = []
 
@@ -46,7 +48,11 @@ function clouds_update(dt)
     for (var i = 0; i < len; ++i)
     {
         var cloud = clouds[i]
-        cloud.world = Matrix.createWorld(cloud.position, camera.front, camera.up)
+        var dir = camera.front// cloud.position.sub(camera.position)
+        cloud.world = Matrix.createWorld(
+            cloud.position, 
+            dir.normalize(), 
+            new Vector3(0, 0, -1).cross(dir).cross(dir).normalize())
     }
 }
 
@@ -62,4 +68,22 @@ function clouds_render()
         Renderer.setVertexBuffer(cloud.vb)
         Renderer.draw(cloud.vertCount)
     }
+}
+
+function cloud_renderOverlay()
+{
+    var amount = 0
+
+    var len = clouds.length
+    var sizeSqr = CLOUD_FOG_SIZE * CLOUD_FOG_SIZE
+    for (var i = 0; i < len; ++i)
+    {
+        var cloud = clouds[i]
+        var dist = Vector2.distanceSquared(cloud.position, camera.position)
+        amount = Math.min(1, Math.max(amount, 1 - (dist / sizeSqr)))
+    }
+
+    SpriteBatch.begin()
+    SpriteBatch.drawRect(null, new Rect(0, 0, res.x, res.y), Color.lerp(Color.TRANSPARENT, CLOUD_COLOR, amount))
+    SpriteBatch.end()
 }
