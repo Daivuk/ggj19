@@ -7,7 +7,7 @@ var SMOKE_PS = getShader("smoke.ps")
 var SMOKE_SIZE = 1.5
 var SMOKE_LIFE = 0.5
 
-function smoke_create(position, size, color)
+function smoke_create(position, size, color, grow)
 {
     var smoke = {
         position: new Vector3(position),
@@ -15,7 +15,8 @@ function smoke_create(position, size, color)
         life: SMOKE_LIFE,
         realSize: size == undefined ? SMOKE_SIZE : size,
         size: 0,
-        color: color == undefined ? Color.WHITE : color
+        color: color == undefined ? Color.WHITE : color,
+        grow: grow == undefined ? true : grow
     }
 
     smokes.push(smoke)
@@ -29,6 +30,7 @@ function smokes_update(dt)
     {
         var smoke = smokes[i]
         var size = (1 - (smoke.life / SMOKE_LIFE)) * smoke.realSize
+        if (!smoke.grow) size = smoke.realSize
         smoke.world._11 = world._11 * size
         smoke.world._12 = world._12 * size
         smoke.world._13 = world._13 * size

@@ -73,7 +73,8 @@ function plane_reset()
         life: UPGRADES.life[0],
         fuel: UPGRADES.fuel[0],
         bullets: UPGRADES.ammo[0],
-        dead: false
+        dead: false,
+        dmgLoop: 0
     }
 }
 
@@ -489,7 +490,29 @@ function plane_update(dt)
 	if(plane.tanksInRange > 0 || plane.aaInRange > 0)
 		playCombatMusic(true)
 	else
-		playCombatMusic(false)
+        playCombatMusic(false)
+
+    // if (GamePad.isJustDown(0, Button.B)) plane.life--
+        
+    plane.dmgLoop -= dt
+    var maxLife = UPGRADES.life[plane.upgrades.life]
+    if (plane.dmgLoop < 0 && plane.life < maxLife)
+    {
+        var percent = 1 - (plane.life / maxLife)
+        plane.dmgLoop = (1 - percent) / 3
+
+        var right = plane.front.cross(plane.up).normalize()
+        var dir = new Vector3(plane.world._21, plane.world._22, plane.world._23)
+        var pos = new Vector3(plane.world._41, plane.world._42, plane.world._43)
+        smoke_create(pos.add(right.mul((-0.15) * PLANE_WIDTH / 2)).add(dir.mul(PLANE_LENGTH / 2 * 0.85)), 1, Color.BLACK, false)
+        smoke_create(pos.add(right.mul((0.15) * PLANE_WIDTH / 2)).add(dir.mul(PLANE_LENGTH / 2 * 0.85)), 1, Color.BLACK, false)
+
+        if (percent > .5)
+        {
+            explosion_create(pos.add(right.mul((-0.15) * PLANE_WIDTH / 2)).add(dir.mul(PLANE_LENGTH / 2 * 0.85)), percent, 0.5)
+            explosion_create(pos.add(right.mul((0.15) * PLANE_WIDTH / 2)).add(dir.mul(PLANE_LENGTH / 2 * 0.85)), percent, 0.5)
+        }
+    }
 }
 
 function plane_landed()
@@ -516,6 +539,7 @@ function playCombatMusic(in_combat)
 function plane_crash()
 {
     playSound("crash.wav")
+    explosion_create(plane.position, 8, 2)
 
     plane.dead = true
 

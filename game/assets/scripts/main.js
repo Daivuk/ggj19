@@ -97,6 +97,7 @@ function init()
     })
 }
 
+// var tmp = 0
 function update(dt)
 {
     if (Input.isJustDown(Key.ESCAPE)) quit()
@@ -116,6 +117,14 @@ function update(dt)
     shots_update(dt)
     smokes_update(dt)
     trees_update(dt)
+    explosions_update(dt)
+
+    // tmp -= dt
+    // if (tmp <= 0)
+    // {
+    //     explosion_create(new Vector3(0, 3, 2), 8)
+    //     tmp = 2
+    // }
 }
 
 function render()
@@ -148,6 +157,7 @@ function render()
     ocean_render()
 
     // Specials
+    explosions_render()
     smokes_render()
     shots_render()
     propeller_render()

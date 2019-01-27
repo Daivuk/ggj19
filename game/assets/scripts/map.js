@@ -16,6 +16,7 @@ function map_reset()
     tents = []
     shots = []
     smokes = []
+    explosions = []
 
     load_entities()
 }

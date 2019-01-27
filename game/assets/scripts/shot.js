@@ -115,6 +115,7 @@ function shots_update(dt)
                 var tank = tanks[t]
                 if (Vector3.distanceSquared(shot.position, tank.position) <= TANK_SIZE * TANK_SIZE)
                 {
+                    explosion_create(shot.position)
                     if (Random.randBool())
                     {
                         // Bounce!
@@ -129,6 +130,8 @@ function shots_update(dt)
                     {
                         tanks.splice(t, 1)
                         plane.cash += 15
+                        explosion_create(tank.position, 16, 1.5)
+                        play3DSound(tank.position, "explosion.wav")
                     }
                     break
                 }
@@ -150,11 +153,14 @@ function shots_update(dt)
                 var tank = aas[t]
                 if (Vector3.distanceSquared(shot.position, tank.position) <= TANK_SIZE * TANK_SIZE)
                 {
+                    explosion_create(shot.position)
                     tank.life--
                     if (tank.life <= 0)
                     {
                         aas.splice(t, 1)
                         plane.cash += 10
+                        explosion_create(tank.position, 16, 1.5)
+                        play3DSound(tank.position, "explosion.wav")
                     }
                     break
                 }
@@ -176,11 +182,14 @@ function shots_update(dt)
                 var tank = tents[t]
                 if (Vector3.distanceSquared(shot.position, tank.position) <= TENT_SIZE * TENT_SIZE)
                 {
+                    explosion_create(shot.position)
                     tank.life--
                     if (tank.life <= 0)
                     {
                         tents.splice(t, 1)
                         plane.cash += 5
+                        explosion_create(tank.position, 16, 1.5)
+                        play3DSound(tank.position, "explosion.wav")
                     }
                     break
                 }
