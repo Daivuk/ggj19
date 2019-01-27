@@ -4,6 +4,7 @@ var TANK_RANGE_SQR = 15 * 15
 var TANK_SHOT_INTERVAL = 0.3
 var TANK_SHOT_COUNT = 3
 var TANK_RECHARGE_TIME = 5
+var TANK_LIFE = 5
 
 var tanks = []
 
@@ -23,7 +24,8 @@ function tank_create(position)
         vertCount: vertBuffer.length / 8,
         world: new Matrix(),
         shotDelay: 0,
-        shotRemaining: TANK_SHOT_COUNT
+        shotRemaining: TANK_SHOT_COUNT,
+        life: TANK_LIFE
     }
     tanks.push(tank)
 }

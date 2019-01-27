@@ -52,6 +52,7 @@ function shots_update(dt)
     for (var i = 0; i < len; ++i)
     {
         var shot = shots[i]
+        // print("i:" + i + " len:" + len + " shot:" + JSON.stringify(shot))
         var prevPos = shot.position
         shot.position = shot.position.add(shot.velocity.mul(dt))
         if (shot.doSmoke)
@@ -63,6 +64,69 @@ function shots_update(dt)
                 {
                     smoke_create(Vector3.lerp(prevPos, shot.position, j))
                 }
+            }
+        }
+
+        // Apply gravity
+        shot.velocity = shot.velocity.add(Vector3.UNIT_Z.mul(-dt * 2)).mul(1 - dt * 0.5) // And friction
+        shot.world = Matrix.createWorld(shot.position, camera.front, camera.up)
+        shot.life -= dt
+        if (shot.life <= 0)
+        {
+            shots.splice(i, 1)
+            --i
+            len = shots.length
+            continue
+        }
+
+        // Test collision with entities
+        if (shot.from != plane && shot.from != null)
+        {
+            if (Vector3.distanceSquared(shot.position, plane.position) <= 0.125)
+            {
+                shots.splice(i, 1)
+                --i
+                len = shots.length
+
+                // Dmg
+                plane.life -= 1
+                camera_shake(0.1)
+                if (plane.life <= 0) plane_crash()
+                continue
+            }
+        }
+        else if (shot.from == plane)
+        {
+            var tl = tanks.length
+            var t = 0
+            for (; t < tl; ++t)
+            {
+                var tank = tanks[t]
+                if (Vector3.distanceSquared(shot.position, tank.position) <= TANK_SIZE * TANK_SIZE)
+                {
+                    if (Random.randBool())
+                    {
+                        // Bounce!
+                        var speed = shot.velocity.length()
+                        shot.velocity = shot.velocity.add(Random.randVector3(new Vector3(-speed, -speed, -shot.velocity.z), new Vector3(speed, speed, -shot.velocity.z)))
+                        shot.from = null
+                        t = tl
+                        break
+                    }
+                    tank.life--
+                    if (tank.life <= 0)
+                    {
+                        tanks.splice(t, 1)
+                    }
+                    break
+                }
+            }
+            if (t != tl)
+            {
+                shots.splice(i, 1)
+                --i
+                len = shots.length
+                continue
             }
         }
 
@@ -81,33 +145,6 @@ function shots_update(dt)
             smoke_create(shot.position.add(new Vector3(0, 0, 0.20)))
             smoke_create(shot.position.add(new Vector3(0, 0, 0.25)))
             continue
-        }
-
-        // Apply gravity
-        shot.velocity = shot.velocity.add(Vector3.UNIT_Z.mul(-dt * 2)).mul(1 - dt * 0.5) // And friction
-        shot.world = Matrix.createWorld(shot.position, camera.front, camera.up)
-        shot.life -= dt
-        if (shot.life <= 0)
-        {
-            shots.splice(i, 1)
-            --i
-            len = shots.length
-        }
-
-        // Test collision with entities
-        if (shot.from != plane)
-        {
-            if (Vector3.distanceSquared(shot.position, plane.position) <= 0.25)
-            {
-                shots.splice(i, 1)
-                --i
-                len = shots.length
-
-                // Dmg
-                plane.life -= 1
-                camera_shake(0.1)
-                if (plane.life <= 0) plane_crash()
-            }
         }
     }
 }

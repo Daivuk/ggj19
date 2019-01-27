@@ -28,6 +28,8 @@ function init()
 
 function update(dt)
 {
+    if (Input.isJustDown(Key.ESCAPE)) quit()
+
     res = Renderer.getResolution()
 
     plane_update(dt)
