@@ -254,8 +254,6 @@ function plane_update(dt)
     var lthumb = GamePad.getLeftThumb(0)
     var rthumb = GamePad.getRightThumb(0)
 
-    print("" + plane.takeOffJingle.isPlaying())
-
     if (plane.locked)
     {
         plane.fuel = Math.min(200, plane.fuel + dt * 50)
