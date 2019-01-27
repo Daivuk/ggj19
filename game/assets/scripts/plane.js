@@ -12,7 +12,7 @@ var PLANE_SHOT_INTERNAL = 0.1
 
 var UPGRADES = {
     fuel: [200, 400, 600],
-    ammo: [50, 100, 200],
+    ammo: [50, 100, 250],
     speed: [0.25, 1, 1.75],
     life: [10, 20, 40]
 }
@@ -449,6 +449,7 @@ function plane_update(dt)
         {
             plane.bullets--
             plane.shootDelay = PLANE_SHOT_INTERNAL
+            if (plane.upgrades.ammo == 2) plane.shootDelay *= 0.75
             playSound("shot.wav", 2, (plane.nextShot - 0.5) * 0.1, 1.5)
             setTimeout(function(){playSound("shot.wav", 1.5, 0, 1)}, PLANE_SHOT_INTERNAL * 1.1 * 1000)
             
