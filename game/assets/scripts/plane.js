@@ -10,6 +10,13 @@ var PLANE_TAIL_MID = (PLANE_HULL_WIDTH + PLANE_TAIL_WIDTH) / 2
 var PROP_SIZE = 0.1
 var PLANE_SHOT_INTERNAL = 0.1
 
+var UPGRADES = {
+    fuel: [200, 400, 600],
+    ammo: [50, 100, 200],
+    speed: [0.25, 1, 1.75],
+    life: [10, 20, 40]
+}
+
 var plane = {
     position: new Vector3(0, 0, 100),
     velocity: new Vector3(0, 0, 0),
@@ -51,12 +58,17 @@ var plane = {
     shootDelay: 0,
     nextShot: 0,
     speed: 0,
-    upgrades: {},
+    upgrades: {
+        fuel: 0,
+        ammo: 0,
+        speed: 0,
+        life: 0
+    },
     cash: 0,
     takeOffDelay: 1,
-    life: 10,
-    fuel: 200,
-    bullets: 50
+    life: UPGRADES.life[0],
+    fuel: UPGRADES.fuel[0],
+    bullets: UPGRADES.ammo[0]
 }
 
 function plane_init()
@@ -268,18 +280,40 @@ function plane_update(dt)
 
     if (plane.locked)
     {
-        plane.fuel = 200
-        plane.bullets = 50
+        plane.fuel = UPGRADES.fuel[plane.upgrades.fuel]
+        plane.bullets = UPGRADES.ammo[plane.upgrades.ammo]
+        plane.life = UPGRADES.life[plane.upgrades.life]
 
-        if (rthumb.y < -0.8)
+        if (rthumb.y < -0.8 && !store.isVisible())
         {
             // Start!
             plane.locked = false
+        }
+        else
+        {
+            if (!store.isVisible())
+            {
+                if (GamePad.isJustDown(0, Button.A))
+                {
+                    store.setVisible(true)
+                }
+            }
+            else
+            {
+                if (GamePad.isJustDown(0, Button.B))
+                {
+                    store.setVisible(false)
+                }
+            }
         }
     }
     else 
     {
         var prevPos = new Vector3(plane.position)
+        if (rthumb.y < 0 && !plane.onDeck)
+        {
+            rthumb.y *= UPGRADES.speed[plane.upgrades.speed]
+        }
         plane.engineRevTarget = -rthumb.y + 2
         if (plane.fuel == 0) plane.engineRevTarget = 0
         plane.engineRev += (plane.engineRevTarget - plane.engineRev) * dt
@@ -369,7 +403,7 @@ function plane_update(dt)
                         if (Math.abs(plane.front.z) < 0.6)
                         {
                             playSound("landed.wav", 4)
-                            plane_respawn()
+                            plane_landed()
                         }
                     }
                     else
@@ -449,6 +483,12 @@ function plane_update(dt)
 		playCombatMusic(false)
 }
 
+function plane_landed()
+{
+    store.setVisible(true)
+    plane_respawn()
+}
+
 function playCombatMusic(in_combat)
 {
 	if(in_combat)
@@ -467,11 +507,31 @@ function playCombatMusic(in_combat)
 function plane_crash()
 {
     playSound("crash.wav")
-    plane.upgrades = {}
     plane.cash = 0
-    plane.fuel = 200
-    plane.life = 10
-    plane.bullets = 50
+
+    plane.upgrades.fuel = 0
+    plane.upgrades.ammo = 0
+    plane.upgrades.speed = 0
+    plane.upgrades.life = 0
+
+    findUI("refuelPow1").setVisible(false)
+    findUI("refuelPow2").setVisible(false)
+    findUI("ammoPow1").setVisible(false)
+    findUI("ammoPow2").setVisible(false)
+    findUI("speedPow1").setVisible(false)
+    findUI("speedPow2").setVisible(false)
+    findUI("lifePow1").setVisible(false)
+    findUI("lifePow2").setVisible(false)
+
+    findUI("getRefuel").setEnabled(true)
+    findUI("getAmmo").setEnabled(true)
+    findUI("getSpeed").setEnabled(true)
+    findUI("getLife").setEnabled(true)
+    
+    plane.fuel = UPGRADES.fuel[plane.upgrades.fuel]
+    plane.bullets = UPGRADES.ammo[plane.upgrades.ammo]
+    plane.life = UPGRADES.life[plane.upgrades.life]
+
     plane_respawn()
 }
 
