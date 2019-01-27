@@ -34,7 +34,7 @@ var plane = {
     propellerIdleSound3: getSound("propellerIdle.wav").createInstance(),
     propellerVS: getShader("propeller.vs"),
     propellerPS: getShader("propeller.ps"),
-    takeOffJingle: getSound("TakeOffJingle.wav").createInstance(),
+    takeOffJingle: getMusic("TakeOffJingle.ogg"),
     locked: true,
     engineRev: 0,
     engineRevTarget: 0,
@@ -49,7 +49,8 @@ var plane = {
     cash: 0,
     takeOffDelay: 1,
     life: 10,
-    fuel: 200
+    fuel: 200,
+    bullets: 50
 }
 
 function plane_init()
@@ -235,7 +236,6 @@ function plane_respawn()
     plane.propellerIdleSound3.setVolume(0)
     plane.propellerIdleSound3.play()
 
-    plane.takeOffJingle.setLoop(false)
     plane.takeOffJingle.setVolume(.8)
 
     plane.world = Matrix.createRotationX(plane.rest * 10)
@@ -254,9 +254,12 @@ function plane_update(dt)
     var lthumb = GamePad.getLeftThumb(0)
     var rthumb = GamePad.getRightThumb(0)
 
+    print("" + plane.takeOffJingle.isPlaying())
+
     if (plane.locked)
     {
-        plane.fuel = Math.min(200, plane.fuel + dt)
+        plane.fuel = Math.min(200, plane.fuel + dt * 50)
+        plane.bullets = 50
 
         if (rthumb.y < -0.8)
         {
@@ -295,7 +298,7 @@ function plane_update(dt)
                 plane.rest = Math.min(1, plane.rest + dt)
             if (plane.lift > 0.5 || plane.position.y > carrier.position.y + CARRIER_DECK_LENGTH / 2)
             {
-                plane.takeOffJingle.play()
+                plane.takeOffJingle.play(false)
                 plane.onDeck = false
 
                 // Translate the position to real position
@@ -386,10 +389,11 @@ function plane_update(dt)
         plane.world)
 
     plane.shootDelay -= dt
-    if (GamePad.isDown(0, Button.RIGHT_TRIGGER))
+    if (plane.bullets > 0 && GamePad.isDown(0, Button.RIGHT_TRIGGER))
     {
         if (plane.shootDelay <= 0)
         {
+            plane.bullets--
             plane.shootDelay = PLANE_SHOT_INTERNAL
             playSound("shot.wav", 2, (plane.nextShot - 0.5) * 0.1, 1.5)
             setTimeout(function(){playSound("shot.wav", 1.5, 0, 1)}, PLANE_SHOT_INTERNAL * 1.1 * 1000)
@@ -424,6 +428,7 @@ function plane_crash()
     plane.cash = 0
     plane.fuel = 200
     plane.life = 10
+    plane.bullets = 50
     plane_respawn()
 }
 

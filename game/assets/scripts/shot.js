@@ -108,7 +108,7 @@ function shots_update(dt)
                     {
                         // Bounce!
                         var speed = shot.velocity.length()
-                        shot.velocity = shot.velocity.add(Random.randVector3(new Vector3(-speed, -speed, -shot.velocity.z), new Vector3(speed, speed, -shot.velocity.z)))
+                        shot.velocity = Random.randVector3(new Vector3(-speed, -speed, -shot.velocity.z), new Vector3(speed, speed, -shot.velocity.z))
                         shot.from = null
                         t = tl
                         break

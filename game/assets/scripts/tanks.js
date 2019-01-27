@@ -1,4 +1,4 @@
-var TANK_TEXTURE = getTexture("tank.png")
+var TANK_TEXTURE = getTexture("tank2.png")
 var TANK_SIZE = 0.5
 var TANK_RANGE_SQR = 15 * 15
 var TANK_SHOT_INTERVAL = 0.3
@@ -11,12 +11,12 @@ var tanks = []
 function tank_create(position)
 {
     var vertBuffer = new Float32Array([
-        -TANK_SIZE / 2, TANK_SIZE, 0, 1, 1, 1, 0, 0,
-        TANK_SIZE / 2, 0, 0, 1, 1, 1, 1, 1,
-        -TANK_SIZE / 2, 0, 0, 1, 1, 1, 0, 1,
-        -TANK_SIZE / 2, TANK_SIZE, 0, 1, 1, 1, 0, 0,
-        TANK_SIZE / 2, TANK_SIZE, 0, 1, 1, 1, 1, 0,
-        TANK_SIZE / 2, 0, 0, 1, 1, 1, 1, 1,
+        -TANK_SIZE, TANK_SIZE, 0, 1, 1, 1, 0, 0,
+        TANK_SIZE, 0, 0, 1, 1, 1, 1, 1,
+        -TANK_SIZE, 0, 0, 1, 1, 1, 0, 1,
+        -TANK_SIZE, TANK_SIZE, 0, 1, 1, 1, 0, 0,
+        TANK_SIZE, TANK_SIZE, 0, 1, 1, 1, 1, 0,
+        TANK_SIZE, 0, 0, 1, 1, 1, 1, 1,
     ])
     var tank = {
         position: new Vector3(position),
@@ -68,7 +68,7 @@ function tanks_update(dt)
 function entity_shoot(from, target, precision)
 {
     var dir = target.position.sub(from.position).normalize()
-    shot_create(from.position.add(new Vector3(0, 0, 0.2)), dir.mul(SHOT_VEL * 0.5), from, precision, true, 2)
+    shot_create(from.position.add(new Vector3(0, 0, 0.3)), dir.mul(SHOT_VEL * 0.5), from, precision, true, 2)
     play3DSound(from.position, "shot.wav", 0.5)
 }
 

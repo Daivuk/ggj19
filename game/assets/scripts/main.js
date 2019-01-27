@@ -118,6 +118,7 @@ function render()
     }
     SpriteBatch.drawText(font, "Life: " + plane.life, new Vector2(10, 80), Vector2.TOP_LEFT, new Color(0.8, 0, 0, 1));
     SpriteBatch.drawText(font, "Fuel: " + plane.fuel, new Vector2(10, 100), Vector2.TOP_LEFT, new Color(0.8, 0, 0, 1));
+    SpriteBatch.drawText(font, "Bullets: " + plane.bullets, new Vector2(10, 120), Vector2.TOP_LEFT, new Color(0.8, 0, 0, 1));
     SpriteBatch.end()
 }
 
