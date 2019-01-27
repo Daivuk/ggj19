@@ -191,20 +191,50 @@ function render()
     SpriteBatch.end()
 
     // Hud
-    SpriteBatch.begin()
-    SpriteBatch.drawText(font, "Speed: " + plane.speed, new Vector2(10, 20), Vector2.TOP_LEFT, new Color(0.8, 0, 0, 1));
-    SpriteBatch.drawText(font, "Lift: " + plane.lift, new Vector2(10, 40), Vector2.TOP_LEFT, new Color(0.8, 0, 0, 1));
-    if (plane.onDeck)
-    {
-        SpriteBatch.drawText(font, "ON DECK", new Vector2(10, 60), Vector2.TOP_LEFT, new Color(0.8, 0, 0, 1));
-    }
-    SpriteBatch.drawText(font, "Life: " + plane.life, new Vector2(10, 80), Vector2.TOP_LEFT, new Color(0.8, 0, 0, 1));
-    SpriteBatch.drawText(font, "Fuel: " + plane.fuel, new Vector2(10, 100), Vector2.TOP_LEFT, new Color(0.8, 0, 0, 1));
-    SpriteBatch.drawText(font, "Bullets: " + plane.bullets, new Vector2(10, 120), Vector2.TOP_LEFT, new Color(0.8, 0, 0, 1));
-    SpriteBatch.drawText(font, "Cash: " + plane.cash + "$", new Vector2(10, 140), Vector2.TOP_LEFT, new Color(0.8, 0, 0, 1));
-    SpriteBatch.end()
+    drawProgressBar(new Vector2(10, 30), "FUEL", plane.fuel, UPGRADES.fuel[plane.upgrades.fuel], UPGRADES.fuel[0])
+    drawProgressBar(new Vector2(10, 70), "LIFE", plane.life, UPGRADES.life[plane.upgrades.life], UPGRADES.life[0])
+    drawProgressBar(new Vector2(10, 110), "AMMO", plane.bullets, UPGRADES.ammo[plane.upgrades.ammo], UPGRADES.ammo[0])
+
+    // SpriteBatch.begin()
+    // SpriteBatch.drawText(font, "Speed: " + plane.speed, new Vector2(10, 20), Vector2.TOP_LEFT, new Color(0.8, 0, 0, 1));
+    // SpriteBatch.drawText(font, "Lift: " + plane.lift, new Vector2(10, 40), Vector2.TOP_LEFT, new Color(0.8, 0, 0, 1));
+    // if (plane.onDeck)
+    // {
+    //     SpriteBatch.drawText(font, "ON DECK", new Vector2(10, 60), Vector2.TOP_LEFT, new Color(0.8, 0, 0, 1));
+    // }
+    // SpriteBatch.drawText(font, "Life: " + plane.life, new Vector2(10, 80), Vector2.TOP_LEFT, new Color(0.8, 0, 0, 1));
+    // SpriteBatch.drawText(font, "Fuel: " + plane.fuel, new Vector2(10, 100), Vector2.TOP_LEFT, new Color(0.8, 0, 0, 1));
+    // SpriteBatch.drawText(font, "Bullets: " + plane.bullets, new Vector2(10, 120), Vector2.TOP_LEFT, new Color(0.8, 0, 0, 1));
+    // SpriteBatch.drawText(font, "Cash: " + plane.cash + "$", new Vector2(10, 140), Vector2.TOP_LEFT, new Color(0.8, 0, 0, 1));
+    // SpriteBatch.end()
 
     Renderer.setFilterMode(FilterMode.NEAREST)
+}
+
+function drawProgressBar(pos, name, val, max, base)
+{
+    var w = 100 * (max / base)
+    var h = 25
+    var p = val / max
+
+    SpriteBatch.begin()
+    SpriteBatch.drawRect(null, new Rect(pos.x, pos.y, w + 6, h + 6), Color.fromHexRGB(0x101024))
+    SpriteBatch.drawRect(null, new Rect(pos.x + 2, pos.y + 2, w + 2, h + 2), Color.fromHexRGB(0x2a2a3a))
+    SpriteBatch.drawRect(null, new Rect(pos.x + 3, pos.y + 3, w * p, h), Color.fromHexRGB(0xffcc68))
+    SpriteBatch.end()
+
+    SpriteBatch.begin(Matrix.createScale(1.5))
+    var texPos = new Vector2((pos.x + 6) / 1.5, (pos.y + h / 2 + 3) / 1.5)
+    SpriteBatch.drawText(font, name, texPos.add(new Vector2(-1, -1)), Vector2.LEFT, Color.fromHexRGB(0x101024))
+    SpriteBatch.drawText(font, name, texPos.add(new Vector2(0, -1)), Vector2.LEFT, Color.fromHexRGB(0x101024))
+    SpriteBatch.drawText(font, name, texPos.add(new Vector2(1, -1)), Vector2.LEFT, Color.fromHexRGB(0x101024))
+    SpriteBatch.drawText(font, name, texPos.add(new Vector2(-1, 0)), Vector2.LEFT, Color.fromHexRGB(0x101024))
+    SpriteBatch.drawText(font, name, texPos.add(new Vector2(1, 0)), Vector2.LEFT, Color.fromHexRGB(0x101024))
+    SpriteBatch.drawText(font, name, texPos.add(new Vector2(-1, 1)), Vector2.LEFT, Color.fromHexRGB(0x101024))
+    SpriteBatch.drawText(font, name, texPos.add(new Vector2(0, 1)), Vector2.LEFT, Color.fromHexRGB(0x101024))
+    SpriteBatch.drawText(font, name, texPos.add(new Vector2(1, 1)), Vector2.LEFT, Color.fromHexRGB(0x101024))
+    SpriteBatch.drawText(font, name, texPos, Vector2.LEFT, Color.fromHexRGB(0xfff8c0))
+    SpriteBatch.end()
 }
 
 function renderUI()
@@ -219,7 +249,7 @@ function renderUI()
             var cost = costs[plane.upgrades.fuel + 1]
             var rect = findUI("getRefuel").getRect()
             var pos = new Vector2((rect.x / 2 - 160) - 1, (rect.y / 2 + rect.h / 4 - 90))
-            SpriteBatch.drawText(font, cost + " $", pos, Vector2.RIGHT, Color.fromHexRGB(0x101024))
+            SpriteBatch.drawText(font, cost + " $", pos.add(new Vector2(1)), Vector2.RIGHT, Color.fromHexRGB(0x101024))
             SpriteBatch.drawText(font, cost + " $", pos, Vector2.RIGHT, Color.fromHexRGB(0xfff8c0))
         }
         if (plane.upgrades.life < 2)
@@ -227,7 +257,7 @@ function renderUI()
             var cost = costs[plane.upgrades.life + 1]
             var rect = findUI("getLife").getRect()
             var pos = new Vector2((rect.x / 2 - 160) - 1, (rect.y / 2 + rect.h / 4 - 90))
-            SpriteBatch.drawText(font, cost + " $", pos, Vector2.RIGHT, Color.fromHexRGB(0x101024))
+            SpriteBatch.drawText(font, cost + " $", pos.add(new Vector2(1)), Vector2.RIGHT, Color.fromHexRGB(0x101024))
             SpriteBatch.drawText(font, cost + " $", pos, Vector2.RIGHT, Color.fromHexRGB(0xfff8c0))
         }
         if (plane.upgrades.ammo < 2)
@@ -235,7 +265,7 @@ function renderUI()
             var cost = costs[plane.upgrades.ammo + 1]
             var rect = findUI("getAmmo").getRect()
             var pos = new Vector2((rect.x / 2 - 160) - 1, (rect.y / 2 + rect.h / 4 - 90))
-            SpriteBatch.drawText(font, cost + " $", pos, Vector2.RIGHT, Color.fromHexRGB(0x101024))
+            SpriteBatch.drawText(font, cost + " $", pos.add(new Vector2(1)), Vector2.RIGHT, Color.fromHexRGB(0x101024))
             SpriteBatch.drawText(font, cost + " $", pos, Vector2.RIGHT, Color.fromHexRGB(0xfff8c0))
         }
         if (plane.upgrades.speed < 2)
@@ -243,9 +273,12 @@ function renderUI()
             var cost = costs[plane.upgrades.speed + 1]
             var rect = findUI("getSpeed").getRect()
             var pos = new Vector2((rect.x / 2 + rect.w / 2 - 160) + 1, (rect.y / 2 + rect.h / 4 - 90))
-            SpriteBatch.drawText(font, cost + " $", pos, Vector2.LEFT, Color.fromHexRGB(0x101024))
+            SpriteBatch.drawText(font, cost + " $", pos.add(new Vector2(1)), Vector2.LEFT, Color.fromHexRGB(0x101024))
             SpriteBatch.drawText(font, cost + " $", pos, Vector2.LEFT, Color.fromHexRGB(0xfff8c0))
         }
+        pos = new Vector2(70, 14)
+        SpriteBatch.drawText(font, "Your cash: " + plane.cash  + " $", pos.add(new Vector2(1)), Vector2.CENTER, Color.fromHexRGB(0x101024))
+        SpriteBatch.drawText(font, "Your cash: " + plane.cash  + " $", pos, Vector2.CENTER, Color.fromHexRGB(0xfff8c0))
         SpriteBatch.end()
     }
 }
