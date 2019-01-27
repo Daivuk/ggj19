@@ -80,6 +80,7 @@ function shots_update(dt)
                 var dist = Vector3.distance(shot.position, plane.position)
                 var percent = Math.max(0, 1 - dist / 5)
                 camera_shake(Math.min(percent * 0.25), 0.1)
+                smoke_create(shot.position, 16, Color.BLACK)
                 plane.life -= percent
                 if (plane.life <= 0) plane_crash()
             }

@@ -67,7 +67,10 @@ function turret_shoot(from, target, precision)
 {
     var dir = target.position.sub(from.position)
     var dist = dir.length()
-    var shot = shot_create(from.position.add(new Vector3(0, 0, 0.3)), dir.div(dist).mul(SHOT_VEL), from, precision, true, dist / (SHOT_VEL))
+    var time = dist / (SHOT_VEL)
+    dir = target.position.add(target.velocity.mul(time)).sub(from.position).normalize()
+    var shot = shot_create(from.position.add(new Vector3(0, 0, 0.3)), dir.mul(SHOT_VEL), from, precision, true, 
+        time)
     shot.flak = true
     play3DSound(from.position, "shot.wav", 0.75)
 }

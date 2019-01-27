@@ -7,14 +7,15 @@ var SMOKE_PS = getShader("smoke.ps")
 var SMOKE_SIZE = 1.5
 var SMOKE_LIFE = 0.5
 
-function smoke_create(position, size)
+function smoke_create(position, size, color)
 {
     var smoke = {
         position: new Vector3(position),
         world: new Matrix(),
         life: SMOKE_LIFE,
         realSize: size == undefined ? SMOKE_SIZE : size,
-        size: 0
+        size: 0,
+        color: color == undefined ? Color.WHITE : color
     }
 
     smokes.push(smoke)
@@ -68,7 +69,7 @@ function smokes_render()
     for (var i = 0; i < len; ++i)
     {
         var smoke = smokes[i]
-        SMOKE_PS.setVector4("color", new Vector4(smoke.life / SMOKE_LIFE * 2))
+        SMOKE_PS.setVector4("color", new Vector4(smoke.life / SMOKE_LIFE * 2).mul(smoke.color.toVector4()))
         Renderer.setWorld(smoke.world)
         Renderer.setVertexBuffer(shotsVB)
         Renderer.draw(shotsVertCount)

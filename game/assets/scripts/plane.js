@@ -256,7 +256,7 @@ function plane_respawn()
     plane.propellerIdleSound3.setLoop(true)
     plane.propellerIdleSound3.setVolume(0)
     plane.propellerIdleSound3.play()
-    
+
     // Local position on deck
     plane.position = new Vector3(
         0, 
@@ -555,7 +555,7 @@ function plane_crash()
         plane_reset()
         map_reset()
         plane_respawn()
-    }, 5000)
+    }, 10000)
 }
 
 function plane_render()
