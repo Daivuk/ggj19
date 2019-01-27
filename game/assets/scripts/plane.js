@@ -17,62 +17,70 @@ var UPGRADES = {
     life: [10, 20, 40]
 }
 
-var plane = {
-    position: new Vector3(0, 0, 100),
-    velocity: new Vector3(0, 0, 0),
-    front: new Vector3(0, 1, 0),
-    up: new Vector3(0, 0, 1),
-    onDeck: true,
-    wingFold: 1,
-    world: new Matrix(),
-    vb: null,
-    texture: getTexture("carrier.png"),
-    vertCount: 0,
-    rest: 1,
-    propellerAngle: 0,
-    propellerWorld: new Matrix(),
-    propellerVB: null,
-    propellerTexture: getTexture("properller.png"), // Oops, properller
-    propellerTexture2: getTexture("properller2.png"),
-    propellerTexture3: getTexture("properller3.png"),
-    propellerVertCount: 0,
-    propellerIdleSound: getSound("propellerIdle.wav").createInstance(),
-    propellerIdleSound2: getSound("propellerIdle.wav").createInstance(),
-    propellerIdleSound3: getSound("propellerIdle.wav").createInstance(),
-    propellerVS: getShader("propeller.vs"),
-    propellerPS: getShader("propeller.ps"),
-    takeOffJingle: getMusic("TakeOffJingle-Short.ogg"),
-	flyingTheme: getMusic("FlyingTheme.ogg"),
-	combatTheme: getMusic("CombatTheme.ogg"),
-	musicIsPlaying: false,
-	combatIsPlaying: false,
-	tanksInRange: 0,
-	aaInRange: 0,
-    locked: true,
-    engineRev: 0,
-    engineRevTarget: 0,
-    lift: 0,
-    roll: 0,
-    pitch: 0,
-    yaw: 0,
-    shootDelay: 0,
-    nextShot: 0,
-    speed: 0,
-    upgrades: {
-        fuel: 0,
-        ammo: 0,
+var plane = {}
+
+function plane_reset()
+{
+    plane = {
+        position: new Vector3(0, 0, 100),
+        velocity: new Vector3(0, 0, 0),
+        front: new Vector3(0, 1, 0),
+        up: new Vector3(0, 0, 1),
+        onDeck: true,
+        wingFold: 1,
+        world: new Matrix(),
+        vb: plane.vb,
+        texture: getTexture("carrier.png"),
+        vertCount: plane.vertCount,
+        rest: 1,
+        propellerAngle: 0,
+        propellerWorld: new Matrix(),
+        propellerVB: plane.propellerVB,
+        propellerTexture: getTexture("properller.png"), // Oops, properller
+        propellerTexture2: getTexture("properller2.png"),
+        propellerTexture3: getTexture("properller3.png"),
+        propellerVertCount: plane.propellerVertCount,
+        propellerIdleSound: getSound("propellerIdle.wav").createInstance(),
+        propellerIdleSound2: getSound("propellerIdle.wav").createInstance(),
+        propellerIdleSound3: getSound("propellerIdle.wav").createInstance(),
+        propellerVS: getShader("propeller.vs"),
+        propellerPS: getShader("propeller.ps"),
+        takeOffJingle: getMusic("TakeOffJingle-Short.ogg"),
+        flyingTheme: getMusic("FlyingTheme.ogg"),
+        combatTheme: getMusic("CombatTheme.ogg"),
+        musicIsPlaying: false,
+        combatIsPlaying: false,
+        tanksInRange: 0,
+        aaInRange: 0,
+        locked: true,
+        engineRev: 0,
+        engineRevTarget: 0,
+        lift: 0,
+        roll: 0,
+        pitch: 0,
+        yaw: 0,
+        shootDelay: 0,
+        nextShot: 0,
         speed: 0,
-        life: 0
-    },
-    cash: 0,
-    takeOffDelay: 1,
-    life: UPGRADES.life[0],
-    fuel: UPGRADES.fuel[0],
-    bullets: UPGRADES.ammo[0]
+        upgrades: {
+            fuel: 0,
+            ammo: 0,
+            speed: 0,
+            life: 0
+        },
+        cash: 0,
+        takeOffDelay: 1,
+        life: UPGRADES.life[0],
+        fuel: UPGRADES.fuel[0],
+        bullets: UPGRADES.ammo[0],
+        dead: false
+    }
 }
 
 function plane_init()
 {
+    plane_reset()
+
     var hullU = 16 / 100
     var hullV = 76 / 100
 
@@ -232,12 +240,6 @@ function plane_respawn()
     plane.speed = 0
     plane.life = 10
 
-    // Local position on deck
-    plane.position = new Vector3(
-        0, 
-        -CARRIER_DECK_LENGTH / 2 + PLANE_LENGTH, 
-        CARRIER_DECK_HEIGHT + PLANE_GEAR_OFFSET)
-
     plane.propellerIdleSound.stop()
     plane.propellerIdleSound2.stop()
     plane.propellerIdleSound3.stop()
@@ -254,6 +256,12 @@ function plane_respawn()
     plane.propellerIdleSound3.setLoop(true)
     plane.propellerIdleSound3.setVolume(0)
     plane.propellerIdleSound3.play()
+    
+    // Local position on deck
+    plane.position = new Vector3(
+        0, 
+        -CARRIER_DECK_LENGTH / 2 + PLANE_LENGTH, 
+        CARRIER_DECK_HEIGHT + PLANE_GEAR_OFFSET)
 
     plane.takeOffJingle.setVolume(.8)
 
@@ -275,6 +283,7 @@ function plane_respawn()
 
 function plane_update(dt)
 {
+    if (plane.dead) return
     var lthumb = GamePad.getLeftThumb(0)
     var rthumb = GamePad.getRightThumb(0)
 
@@ -507,12 +516,25 @@ function playCombatMusic(in_combat)
 function plane_crash()
 {
     playSound("crash.wav")
-    plane.cash = 0
 
-    plane.upgrades.fuel = 0
-    plane.upgrades.ammo = 0
-    plane.upgrades.speed = 0
-    plane.upgrades.life = 0
+    plane.dead = true
+
+    plane.propellerIdleSound.stop()
+    plane.propellerIdleSound2.stop()
+    plane.propellerIdleSound3.stop()
+    plane.takeOffJingle.stop();
+
+    plane.propellerIdleSound.setLoop(true)
+    plane.propellerIdleSound.setVolume(0.1)
+    plane.propellerIdleSound.play()
+
+    plane.propellerIdleSound2.setLoop(true)
+    plane.propellerIdleSound2.setVolume(0)
+    plane.propellerIdleSound2.play()
+
+    plane.propellerIdleSound3.setLoop(true)
+    plane.propellerIdleSound3.setVolume(0)
+    plane.propellerIdleSound3.play()
 
     findUI("refuelPow1").setVisible(false)
     findUI("refuelPow2").setVisible(false)
@@ -527,16 +549,18 @@ function plane_crash()
     findUI("getAmmo").setEnabled(true)
     findUI("getSpeed").setEnabled(true)
     findUI("getLife").setEnabled(true)
-    
-    plane.fuel = UPGRADES.fuel[plane.upgrades.fuel]
-    plane.bullets = UPGRADES.ammo[plane.upgrades.ammo]
-    plane.life = UPGRADES.life[plane.upgrades.life]
 
-    plane_respawn()
+    setTimeout(function()
+    {
+        plane_reset()
+        map_reset()
+        plane_respawn()
+    }, 5000)
 }
 
 function plane_render()
 {
+    if (plane.dead) return
     Renderer.setWorld(plane.world)
     Renderer.setVertexBuffer(plane.vb)
     Renderer.setTexture(plane.texture, 1)
@@ -545,6 +569,7 @@ function plane_render()
 
 function propeller_render()
 {
+    if (plane.dead) return
     Renderer.setBlendMode(BlendMode.PREMULTIPLIED)
     Renderer.setFilterMode(FilterMode.NEAREST)
     Renderer.setBackFaceCull(false)

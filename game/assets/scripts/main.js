@@ -9,7 +9,7 @@ var store = loadUI("store.json")
 
 init()
 
-var costs = [0, 25, 50]
+var costs = [0, 25, 75]
 
 function init()
 {
@@ -175,13 +175,14 @@ function render()
     var screenPos2d = new Vector2(
         screenPos.x / screenPos.z * res.x / 2 + res.x / 2, 
         -screenPos.y / screenPos.z * res.y / 2 + res.y / 2)
-    SpriteBatch.drawSprite(crosshair, screenPos2d, new Color(0.8, 0, 0, 1), 0, 1, Vector2.CENTER)
+    if (!plane.dead)
+        SpriteBatch.drawSprite(crosshair, screenPos2d, new Color(0.8, 0, 0, 1), 0, 1, Vector2.CENTER)
 
     SpriteBatch.end()
 
-
+    // Hud
     SpriteBatch.begin()
-    SpriteBatch.drawText(font, "Speed: " + plane.engineRevTarget, new Vector2(10, 20), Vector2.TOP_LEFT, new Color(0.8, 0, 0, 1));
+    SpriteBatch.drawText(font, "Speed: " + plane.speed, new Vector2(10, 20), Vector2.TOP_LEFT, new Color(0.8, 0, 0, 1));
     SpriteBatch.drawText(font, "Lift: " + plane.lift, new Vector2(10, 40), Vector2.TOP_LEFT, new Color(0.8, 0, 0, 1));
     if (plane.onDeck)
     {

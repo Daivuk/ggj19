@@ -32,6 +32,12 @@ function camera_update(dt)
     var targetPosition = planePos.sub(planeFront.mul(0.25)).add(planeUp.mul(0.35))
     var targetTarget = targetPosition.add(planeFront)
     var targetUpTarget = targetPosition.add(planeUp)
+    if (plane.dead)
+    {
+        targetPosition = planePos.add(new Vector3(-4, 4, 4))
+        targetUpTarget = targetPosition.add(new Vector3(0, 0, 1))
+        targetTarget = planePos
+    }
 
     camera.position = camera.position.add(targetPosition.sub(camera.position).mul(dt * CAMERA_ADAPT_SPEED))
     camera.target = camera.target.add(targetTarget.sub(camera.target).mul(dt * CAMERA_ADAPT_SPEED))

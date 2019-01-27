@@ -9,6 +9,17 @@ var map = {
     world: new Matrix()
 }
 
+function map_reset()
+{
+    tanks = []
+    aas = []
+    tents = []
+    shots = []
+    smokes = []
+
+    load_entities()
+}
+
 function map_init()
 {
     // Generate clouds
@@ -71,6 +82,7 @@ function map_init()
 function load_entities()
 {
     var file = new BinaryFileReader("entities.raw")
+    var totalValue = 0
     for (var y = 0; y < 256; ++y)
     {
         for (var x = 0; x < 256; ++x)
@@ -81,9 +93,21 @@ function load_entities()
             var a = file.readUInt8()
             if (a == 0) continue
 
-            if (r == 255) tank_create(new Vector3(x - 128, y - 128, map.hm[y * 256 + x]))
-            if (g == 255) tent_create(new Vector3(x - 128, y - 128, map.hm[y * 256 + x]))
-            if (b == 255) aa_create(new Vector3(x - 128, y - 128, map.hm[y * 256 + x]))
+            if (r == 255)
+            { 
+                tank_create(new Vector3(x - 128, y - 128, map.hm[y * 256 + x]))
+                totalValue += 15
+            }
+            if (g == 255)
+            { 
+                tent_create(new Vector3(x - 128, y - 128, map.hm[y * 256 + x]))
+                totalValue += 10
+            }
+            if (b == 255)
+            {
+                aa_create(new Vector3(x - 128, y - 128, map.hm[y * 256 + x]))
+                totalValue += 5
+            }
         }
     }
 }
