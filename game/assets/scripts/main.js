@@ -178,6 +178,7 @@ function render()
     SpriteBatch.drawRect(screenRT, new Rect(0, 0, res.x, res.y), Color.WHITE)
     Renderer.setBlendMode(BlendMode.ADD)
     SpriteBatch.drawRect(bloomRT, new Rect(0, 0, res.x, res.y), Color.WHITE)
+    SpriteBatch.end()
 
     var viewProj = camera.view.mul(camera.projection)
     var target = plane.position.add(new Vector3(plane.world._21, plane.world._22, plane.world._23).mul(20))
@@ -186,9 +187,19 @@ function render()
         screenPos.x / screenPos.z * res.x / 2 + res.x / 2, 
         -screenPos.y / screenPos.z * res.y / 2 + res.y / 2)
     if (!plane.dead)
+    {
+        SpriteBatch.begin()
+        Renderer.setBlendMode(BlendMode.ADD)
         SpriteBatch.drawSprite(crosshair, screenPos2d, new Color(0.8, 0, 0, 1), 0, 1, Vector2.CENTER)
-
-    SpriteBatch.end()
+        SpriteBatch.end()
+    }
+    else
+    {
+        SpriteBatch.begin()
+        Renderer.setBlendMode(BlendMode.PREMULTIPLIED)
+        SpriteBatch.drawSprite(getTexture("credits.png"), new Vector2(res.x / 2, res.y / 1.25), Color.WHITE, 0, 1.5)
+        SpriteBatch.end()
+    }
 
     // Hud
     drawProgressBar(new Vector2(10, 30), "FUEL", plane.fuel, UPGRADES.fuel[plane.upgrades.fuel], UPGRADES.fuel[0])
