@@ -256,7 +256,7 @@ function plane_update(dt)
 
     if (plane.locked)
     {
-        plane.fuel = Math.min(200, plane.fuel + dt * 50)
+        plane.fuel = 200
         plane.bullets = 50
 
         if (rthumb.y < -0.8)

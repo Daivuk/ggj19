@@ -76,9 +76,9 @@ function play3DSound(position, filename, pitch)
 {
     var dir = position.sub(camera.position)
     var dis = dir.length()
-    if (dis > 20) return // Too far
+    if (dis > 40) return // Too far
 
-    var volume = 1 - dis / 20
+    var volume = 1 - dis / 40
     volume = Math.pow(volume, 4)
 
     setTimeout(function()

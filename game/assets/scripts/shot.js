@@ -44,6 +44,8 @@ function shot_create(position, vel, from, precision, doSmoke, life)
     shot.velocity = dir.mul(speed)
 
     shots.push(shot)
+
+    return shot
 }
 
 function shots_update(dt)
@@ -52,7 +54,6 @@ function shots_update(dt)
     for (var i = 0; i < len; ++i)
     {
         var shot = shots[i]
-        // print("i:" + i + " len:" + len + " shot:" + JSON.stringify(shot))
         var prevPos = shot.position
         shot.position = shot.position.add(shot.velocity.mul(dt))
         if (shot.doSmoke)
@@ -73,6 +74,15 @@ function shots_update(dt)
         shot.life -= dt
         if (shot.life <= 0)
         {
+            if (shot.flak)
+            {
+                play3DSound(shot.position, "flakExplosion.wav", 0.3)
+                var dist = Vector3.distance(shot.position, plane.position)
+                var percent = Math.max(0, 1 - dist / 5)
+                camera_shake(Math.min(percent * 0.25), 0.1)
+                plane.life -= percent
+                if (plane.life <= 0) plane_crash()
+            }
             shots.splice(i, 1)
             --i
             len = shots.length
@@ -117,6 +127,31 @@ function shots_update(dt)
                     if (tank.life <= 0)
                     {
                         tanks.splice(t, 1)
+                    }
+                    break
+                }
+            }
+            if (t != tl)
+            {
+                shots.splice(i, 1)
+                --i
+                len = shots.length
+                continue
+            }
+
+
+
+            var tl = aas.length
+            var t = 0
+            for (; t < tl; ++t)
+            {
+                var tank = aas[t]
+                if (Vector3.distanceSquared(shot.position, tank.position) <= TANK_SIZE * TANK_SIZE)
+                {
+                    tank.life--
+                    if (tank.life <= 0)
+                    {
+                        aas.splice(t, 1)
                     }
                     break
                 }
