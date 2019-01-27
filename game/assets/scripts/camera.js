@@ -34,9 +34,10 @@ function camera_update(dt)
     var targetUpTarget = targetPosition.add(planeUp)
     if (plane.dead)
     {
-        targetPosition = planePos.add(new Vector3(-4, 4, 4))
-        targetUpTarget = targetPosition.add(new Vector3(0, 0, 1))
+        angle += dt * Math.PI / 4
+        targetPosition = new Vector3(plane.position.x + Math.cos(angle) * 3, plane.position.y + Math.sin(angle) * 3, plane.position.z + 3)
         targetTarget = planePos
+        targetUpTarget = targetPosition.add(new Vector3(0, 0, 1))
     }
 
     camera.position = camera.position.add(targetPosition.sub(camera.position).mul(dt * CAMERA_ADAPT_SPEED))
@@ -45,11 +46,6 @@ function camera_update(dt)
 
     camera.front = camera.target.sub(camera.position).normalize()
     camera.up = camera.upTarget.sub(camera.position).normalize()
-
-    // angle += dt * Math.PI / 4
-    // camera.position = new Vector3(plane.position.x + Math.cos(angle) * 1, plane.position.y + Math.sin(angle) * 1, plane.position.z + 1)
-    // camera.front = plane.position.sub(camera.position)
-    // camera.up = Vector3.UNIT_Z
 
     camera.view = Matrix.createLookAt(camera.position, camera.position.add(camera.front), camera.up)
     camera.projection = Matrix.createPerspectiveFieldOfView(Math.PI / (2 + plane.speed / 10), res.x / res.y, 0.1, 200)
