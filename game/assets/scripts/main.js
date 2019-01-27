@@ -95,7 +95,17 @@ function render()
     SpriteBatch.drawRect(screenRT, new Rect(0, 0, res.x, res.y), Color.WHITE)
     Renderer.setBlendMode(BlendMode.ADD)
     SpriteBatch.drawRect(bloomRT, new Rect(0, 0, res.x, res.y), Color.WHITE)
+
+    var viewProj = camera.view.mul(camera.projection)
+    var target = plane.position.add(new Vector3(plane.world._21, plane.world._22, plane.world._23).mul(20))
+    var screenPos = new Vector4(target.x, target.y, target.z, 1).transform(viewProj)
+    var screenPos2d = new Vector2(
+        screenPos.x / screenPos.z * res.x / 2 + res.x / 2, 
+        -screenPos.y / screenPos.z * res.y / 2 + res.y / 2)
+    SpriteBatch.drawSprite(crosshair, screenPos2d, new Color(0.8, 0, 0, 1), 0, 1, Vector2.CENTER)
+
     SpriteBatch.end()
+
 
     SpriteBatch.begin()
     SpriteBatch.drawText(font, "Speed: " + plane.speed, new Vector2(10, 20), Vector2.TOP_LEFT, new Color(0.8, 0, 0, 1));

@@ -95,16 +95,19 @@ function shots_update(dt)
         }
 
         // Test collision with entities
-        if (Vector3.distanceSquared(shot.position, plane.position) <= 0.25)
+        if (shot.from != plane)
         {
-            shots.splice(i, 1)
-            --i
-            len = shots.length
+            if (Vector3.distanceSquared(shot.position, plane.position) <= 0.25)
+            {
+                shots.splice(i, 1)
+                --i
+                len = shots.length
 
-            // Dmg
-            plane.life -= 1
-            camera_shake(0.1)
-            if (plane.life <= 0) plane_crash()
+                // Dmg
+                plane.life -= 1
+                camera_shake(0.1)
+                if (plane.life <= 0) plane_crash()
+            }
         }
     }
 }

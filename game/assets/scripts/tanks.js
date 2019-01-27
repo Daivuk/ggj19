@@ -1,9 +1,9 @@
 var TANK_TEXTURE = getTexture("tank.png")
 var TANK_SIZE = 0.5
 var TANK_RANGE_SQR = 15 * 15
-var TANK_SHOT_INTERNAL = 0.1
-var TANK_SHOT_COUNT = 10
-var TANK_RECHARGE_TIME = 3
+var TANK_SHOT_INTERVAL = 0.3
+var TANK_SHOT_COUNT = 3
+var TANK_RECHARGE_TIME = 5
 
 var tanks = []
 
@@ -46,14 +46,14 @@ function tanks_update(dt)
             var disSqrt = Vector3.distanceSquared(tank.position.add(new Vector3(0, 0, 0.1)), plane.position)
             if (disSqrt <= TANK_RANGE_SQR)
             {
-                entity_shoot(tank, plane, 2)
+                entity_shoot(tank, plane, 15)
                 tank.shotRemaining--
                 if (tank.shotRemaining <= 0)
                 {
                     tank.shotRemaining = TANK_SHOT_COUNT
                     tank.shotDelay = TANK_RECHARGE_TIME
                 }
-                else tank.shotDelay = TANK_SHOT_INTERNAL
+                else tank.shotDelay = TANK_SHOT_INTERVAL
             }
         }
         else
@@ -66,8 +66,8 @@ function tanks_update(dt)
 function entity_shoot(from, target, precision)
 {
     var dir = target.position.sub(from.position).normalize()
-    shot_create(from.position, dir.mul(SHOT_VEL * 0.25), from, precision, false, 2)
-    play3DSound(from.position, "shot.wav", 1)
+    shot_create(from.position.add(new Vector3(0, 0, 0.2)), dir.mul(SHOT_VEL * 0.5), from, precision, true, 2)
+    play3DSound(from.position, "shot.wav", 0.5)
 }
 
 function play3DSound(position, filename, pitch)
