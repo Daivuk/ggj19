@@ -218,6 +218,7 @@ function plane_respawn()
     plane.shootDelay = 0
     plane.nextShot = 0
     plane.speed = 0
+    plane.life = 10
 
     // Local position on deck
     plane.position = new Vector3(

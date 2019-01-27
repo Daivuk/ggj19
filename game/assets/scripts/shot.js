@@ -127,6 +127,7 @@ function shots_update(dt)
                     if (tank.life <= 0)
                     {
                         tanks.splice(t, 1)
+                        plane.cash += 15
                     }
                     break
                 }
@@ -152,6 +153,33 @@ function shots_update(dt)
                     if (tank.life <= 0)
                     {
                         aas.splice(t, 1)
+                        plane.cash += 10
+                    }
+                    break
+                }
+            }
+            if (t != tl)
+            {
+                shots.splice(i, 1)
+                --i
+                len = shots.length
+                continue
+            }
+
+
+
+            var tl = tents.length
+            var t = 0
+            for (; t < tl; ++t)
+            {
+                var tank = tents[t]
+                if (Vector3.distanceSquared(shot.position, tank.position) <= TENT_SIZE * TENT_SIZE)
+                {
+                    tank.life--
+                    if (tank.life <= 0)
+                    {
+                        tents.splice(t, 1)
+                        plane.cash += 5
                     }
                     break
                 }

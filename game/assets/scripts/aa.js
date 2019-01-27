@@ -1,8 +1,8 @@
 var aa_TEXTURE = getTexture("turret.png")
 var aa_SIZE = 1
-var aa_RANGE_SQR = 50 * 50
+var aa_RANGE_SQR = 40 * 40
 var aa_RECHARGE_TIME = 5
-var aa_LIFE = 3
+var aa_LIFE = 5
 
 var aas = []
 
@@ -42,7 +42,7 @@ function aas_update(dt)
         aa.world = Matrix.createConstrainedBillboard(aa.position, camera.position, Vector3.UNIT_Z)
 
         var disSqrt = Vector3.distanceSquared(aa.position.add(new Vector3(0, 0, 0.1)), plane.position)
-		if (disSqrt <= aa_RANGE_SQR / 2)
+		if (disSqrt <= 20 * 20)
 		{
 			// Keep track of the nbr of AAs in range
 			plane.aaInRange++
