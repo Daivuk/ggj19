@@ -140,6 +140,8 @@ function render()
     Renderer.popRenderTarget()
 
     Renderer.pushRenderTarget(screenRT)
+    Renderer.clearDepth()
+    
     SpriteBatch.begin()
     SpriteBatch.drawRect(skyboxRT, new Rect(0, 0, res.x, res.y), Color.WHITE)
     SpriteBatch.end()
