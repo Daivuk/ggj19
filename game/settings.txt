@@ -14,7 +14,7 @@ gameName = Global Game Jam 2019
 resizableWindow = true
 
 # Run the game in full screen. This is borderless fullscreen taking up your desktop resolution
-fullscreen = false
+fullscreen = true
 
 # Fixed step update. Games where simulation or physic is important should use that
 fixedStep = false
@@ -29,7 +29,7 @@ appID = null
 appSecret = null
 
 # Display FPS in the upper left corner
-showFPS = true
+showFPS = false
 
 # Displays debug log on screen
-onScreenLog = true
+onScreenLog = false

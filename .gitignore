@@ -331,3 +331,6 @@ ASALocalRun/
 
 build/
 imgui.ini
+EaglesNest.zip
+EaglesNest_osx
+EaglesNest_win32.exe
