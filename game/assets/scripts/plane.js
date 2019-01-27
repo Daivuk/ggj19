@@ -34,7 +34,13 @@ var plane = {
     propellerIdleSound3: getSound("propellerIdle.wav").createInstance(),
     propellerVS: getShader("propeller.vs"),
     propellerPS: getShader("propeller.ps"),
-    takeOffJingle: getMusic("TakeOffJingle.ogg"),
+    takeOffJingle: getMusic("TakeOffJingle-Short.ogg"),
+	flyingTheme: getMusic("FlyingTheme.ogg"),
+	combatTheme: getMusic("CombatTheme.ogg"),
+	musicIsPlaying: false,
+	combatIsPlaying: false,
+	tanksInRange: 0,
+	aaInRange: 0,
     locked: true,
     engineRev: 0,
     engineRevTarget: 0,
@@ -225,7 +231,7 @@ function plane_respawn()
     plane.takeOffJingle.stop();
 
     plane.propellerIdleSound.setLoop(true)
-    plane.propellerIdleSound.setVolume(0.2)
+    plane.propellerIdleSound.setVolume(0.1)
     plane.propellerIdleSound.play()
 
     plane.propellerIdleSound2.setLoop(true)
@@ -238,6 +244,11 @@ function plane_respawn()
 
     plane.takeOffJingle.setVolume(.8)
 
+	plane.musicIsPlaying = false
+	plane.combatIsPlaying = false
+	plane.flyingTheme.stop()
+	plane.combatTheme.stop()
+	
     plane.world = Matrix.createRotationX(plane.rest * 10)
     if (plane.onDeck)
     {
@@ -274,10 +285,10 @@ function plane_update(dt)
         plane.propellerIdleSound.setPitch((plane.engineRev - 1.5 - 1) * 0.25 + 1)
 
         plane.propellerIdleSound2.setPitch((plane.engineRev - 1.5 - 1) * 0.55 + 1)
-        plane.propellerIdleSound2.setVolume((plane.engineRev - 1.5) * 0.5)
+        plane.propellerIdleSound2.setVolume((plane.engineRev - 1.5) * 0.3)
         
         plane.propellerIdleSound3.setPitch((plane.engineRev - 1.5 - 1) * 2 + 1)
-        plane.propellerIdleSound3.setVolume((plane.engineRev - 2.5) * 0.5)
+        plane.propellerIdleSound3.setVolume((plane.engineRev - 2.5) * 0.3)
 
         plane.velocity = plane.velocity.add(plane.front.mul(plane.engineRev * dt * 0.5))
         plane.speed = plane.velocity.length()
@@ -417,6 +428,39 @@ function plane_update(dt)
         // Kaboom   
         plane_crash()
     }
+
+	if (!plane.onDeck && !plane.takeOffJingle.isPlaying())
+	{
+		if(!plane.musicIsPlaying)
+		{
+			plane.flyingTheme.setVolume(1.0)
+			plane.flyingTheme.play(true)
+			plane.musicIsPlaying = true
+			plane.combatTheme.setVolume(0.0)
+			plane.combatTheme.play(true)		
+		}
+	}
+	
+	// If there are any tanks or AAs in range, switch to the combat music
+	if(plane.tanksInRange > 0 || plane.aaInRange > 0)
+		playCombatMusic(true)
+	else
+		playCombatMusic(false)
+}
+
+function playCombatMusic(in_combat)
+{
+	if(in_combat)
+	{
+		plane.flyingTheme.setVolume(0.0)
+		plane.combatTheme.setVolume(1.0)
+	}
+	else
+	{
+		plane.flyingTheme.setVolume(1.0)
+		plane.combatTheme.setVolume(0.0)		
+	}
+	plane.combatIsPlaying = in_combat;
 }
 
 function plane_crash()

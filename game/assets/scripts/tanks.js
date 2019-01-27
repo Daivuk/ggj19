@@ -38,16 +38,22 @@ function tanks_init()
 function tanks_update(dt)
 {
     var len = tanks.length
+	plane.tanksInRange = 0
     for (var i = 0; i < len; ++i)
     {
         var tank = tanks[i]
         tank.world = Matrix.createConstrainedBillboard(tank.position, camera.position, Vector3.UNIT_Z)
 
+        var disSqrt = Vector3.distanceSquared(tank.position.add(new Vector3(0, 0, 0.1)), plane.position)
+		if (disSqrt <= TANK_RANGE_SQR)
+		{
+			// Keep track of the nbr of Tanks in range
+			plane.tanksInRange++
+		}
         if (tank.shotDelay <= 0)
         {
-            var disSqrt = Vector3.distanceSquared(tank.position.add(new Vector3(0, 0, 0.1)), plane.position)
             if (disSqrt <= TANK_RANGE_SQR)
-            {
+            {	
                 entity_shoot(tank, plane, 15)
                 tank.shotRemaining--
                 if (tank.shotRemaining <= 0)

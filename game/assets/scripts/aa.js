@@ -35,15 +35,22 @@ function aas_init()
 function aas_update(dt)
 {
     var len = aas.length
+	plane.aaInRange = 0
     for (var i = 0; i < len; ++i)
     {
         var aa = aas[i]
         aa.world = Matrix.createConstrainedBillboard(aa.position, camera.position, Vector3.UNIT_Z)
 
+        var disSqrt = Vector3.distanceSquared(aa.position.add(new Vector3(0, 0, 0.1)), plane.position)
+		if (disSqrt <= aa_RANGE_SQR / 2)
+		{
+			// Keep track of the nbr of AAs in range
+			plane.aaInRange++
+		}
+			
         if (aa.shotDelay <= 0)
         {
-            var disSqrt = Vector3.distanceSquared(aa.position.add(new Vector3(0, 0, 0.1)), plane.position)
-            if (disSqrt <= aa_RANGE_SQR && disSqrt >= 10 * 10)
+			if (disSqrt <= aa_RANGE_SQR && disSqrt >= 10 * 10)
             {
                 turret_shoot(aa, plane, 15)
                 aa.shotDelay = aa_RECHARGE_TIME
