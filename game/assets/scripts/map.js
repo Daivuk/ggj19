@@ -64,6 +64,28 @@ function map_init()
 
     map.vb = VertexBuffer.createStatic(new Float32Array(verts))
     map.vertCount = verts.length / 8
+
+    load_entities()
+}
+
+function load_entities()
+{
+    var file = new BinaryFileReader("entities.raw")
+    for (var y = 0; y < 256; ++y)
+    {
+        for (var x = 0; x < 256; ++x)
+        {
+            var r = file.readUInt8()
+            var g = file.readUInt8()
+            var b = file.readUInt8()
+            var a = file.readUInt8()
+            if (a == 0) continue
+
+            if (r == 255) tank_create(new Vector3(x - 128, y - 128, map.hm[y * 256 + x]))
+            if (g == 255) tent_create(new Vector3(x - 128, y - 128, map.hm[y * 256 + x]))
+            if (b == 255) aa_create(new Vector3(x - 128, y - 128, map.hm[y * 256 + x]))
+        }
+    }
 }
 
 function map_render()

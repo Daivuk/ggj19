@@ -179,8 +179,8 @@ function carrier_update(dt)
     carrier.rockY += dt
     var rockX = Math.sin(carrier.rockX)
     var rockY = Math.sin(carrier.rockY)
-    rockX *= Math.PI / 2
-    rockY *= Math.PI / 4
+    rockX *= Math.PI / 2 * 2
+    rockY *= Math.PI / 4 * 2
 
     carrier.world = 
         Matrix.createRotationX(rockX).mul(

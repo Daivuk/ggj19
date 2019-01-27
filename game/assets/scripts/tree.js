@@ -25,6 +25,7 @@ function tree_create(position)
 
 function trees_init()
 {
+    Random.setSeed(0)
     for (var i = 0; i < 2000; ++i)
     {
         var pos = new Vector3(Random.randInt(-128, 127), Random.randInt(-128, 127), 0)

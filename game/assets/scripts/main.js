@@ -4,11 +4,14 @@ var bloomRT = Texture.createScreenRenderTarget()
 var screenRT = Texture.createScreenRenderTarget()
 var font = getFont("font.fnt")
 var bloomPS = getShader("bloom.ps")
+var crosshair = getTexture("crosshair.png")
 
 init()
 
 function init()
 {
+    Input.setMouseVisible(false)
+    
     skybox_init()
     carrier_init()
     plane_init()
@@ -18,6 +21,9 @@ function init()
     ocean_init()
     shots_init()
     trees_init()
+    tanks_init()
+    tents_init()
+    aas_init()
 }
 
 function update(dt)
@@ -26,6 +32,9 @@ function update(dt)
 
     plane_update(dt)
     carrier_update(dt)
+    tanks_update(dt)
+    tents_update(dt)
+    aas_update(dt)
     camera_update(dt)
     skybox_update(dt)
     clouds_update(dt)
@@ -57,7 +66,10 @@ function render()
     threeD_setup()
     plane_render()
     carrier_render()
+    tents_render()
     trees_render()
+    tanks_render()
+    aas_render()
     clouds_render()
     map_render()
     ocean_render()
@@ -92,8 +104,8 @@ function render()
     {
         SpriteBatch.drawText(font, "ON DECK", new Vector2(10, 60), Vector2.TOP_LEFT, new Color(0.8, 0, 0, 1));
     }
-    SpriteBatch.drawSprite(null, new Vector2(50, 100), new Color(1, 0, 0, 1), 0, 4);
-    SpriteBatch.drawSprite(null, new Vector2(50 + plane.roll / 100 * 40, 100 + plane.pitch / 100 * 40), new Color(0, 1, 0, 1), 0, 4);
+    SpriteBatch.drawText(font, "Life: " + plane.life, new Vector2(10, 80), Vector2.TOP_LEFT, new Color(0.8, 0, 0, 1));
+    SpriteBatch.drawText(font, "Fuel: " + plane.fuel, new Vector2(10, 100), Vector2.TOP_LEFT, new Color(0.8, 0, 0, 1));
     SpriteBatch.end()
 }
 

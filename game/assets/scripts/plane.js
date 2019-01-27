@@ -1,3 +1,15 @@
+var PLANE_WIDTH = 0.6
+var PLANE_DROP = 0.03
+var PLANE_LENGTH = 0.5
+var PLANE_HULL_WIDTH = 0.07
+var PLANE_TAIL_WIDTH = 0.02
+var PLANE_GEAR_OFFSET = 0.1
+var PLANE_FIN_LENGTH = 0.08
+var PLANE_FIN_WIDTH = 0.2
+var PLANE_TAIL_MID = (PLANE_HULL_WIDTH + PLANE_TAIL_WIDTH) / 2
+var PROP_SIZE = 0.1
+var PLANE_SHOT_INTERNAL = 0.1
+
 var plane = {
     position: new Vector3(0, 0, 100),
     velocity: new Vector3(0, 0, 0),
@@ -35,20 +47,10 @@ var plane = {
     speed: 0,
     upgrades: {},
     cash: 0,
-    takeOffDelay: 1
+    takeOffDelay: 1,
+    life: 10,
+    fuel: 200
 }
-
-var PLANE_WIDTH = 0.6
-var PLANE_DROP = 0.03
-var PLANE_LENGTH = 0.5
-var PLANE_HULL_WIDTH = 0.07
-var PLANE_TAIL_WIDTH = 0.02
-var PLANE_GEAR_OFFSET = 0.1
-var PLANE_FIN_LENGTH = 0.08
-var PLANE_FIN_WIDTH = 0.2
-var PLANE_TAIL_MID = (PLANE_HULL_WIDTH + PLANE_TAIL_WIDTH) / 2
-var PROP_SIZE = 0.1
-var PLANE_SHOT_INTERNAL = 0.1
 
 function plane_init()
 {
@@ -254,6 +256,8 @@ function plane_update(dt)
 
     if (plane.locked)
     {
+        plane.fuel = Math.min(100, plane.fuel + dt)
+
         if (rthumb.y < -0.8)
         {
             // Start!
@@ -264,6 +268,7 @@ function plane_update(dt)
     {
         var prevPos = new Vector3(plane.position)
         plane.engineRevTarget = -rthumb.y + 2
+        if (plane.fuel == 0) plane.engineRevTarget = 0
         plane.engineRev += (plane.engineRevTarget - plane.engineRev) * dt
         plane.propellerIdleSound.setPitch((plane.engineRev - 1.5 - 1) * 0.25 + 1)
 
@@ -363,6 +368,8 @@ function plane_update(dt)
         }
     }
 
+    plane.fuel = Math.max(0, plane.fuel - plane.engineRev * dt)
+
     plane.propellerAngle += dt * -500 * (plane.engineRev + 1)
     plane.propellerAngle %= 360
     plane.world = Matrix.createRotationX(plane.rest * 10)
@@ -415,6 +422,8 @@ function plane_crash()
     playSound("crash.wav")
     plane.upgrades = {}
     plane.cash = 0
+    plane.fuel = 200
+    plane.life = 10
     plane_respawn()
 }
 

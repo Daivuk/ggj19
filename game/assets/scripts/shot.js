@@ -7,6 +7,7 @@ var shotsVertCount = 0
 
 var SHOT_VEL = 45
 var SHOT_SIZE = 0.1
+var SHOT_LIFE = 0.5
 
 function shots_init()
 {
@@ -22,14 +23,16 @@ function shots_init()
     shotsVertCount = vertBuffer.length / 2
 }
 
-function shot_create(position, vel, from, precision)
+function shot_create(position, vel, from, precision, doSmoke, life)
 {
     var shot = {
         position: new Vector3(position),
         velocity: new Vector3(vel),
         from: from,
         world: new Matrix(),
-        life: 2
+        realLife: life == undefined ? SHOT_LIFE : life,
+        life: life == undefined ? SHOT_LIFE : life,
+        doSmoke: doSmoke == undefined ? true : doSmoke
     }
 
     var speed = shot.velocity.length()
@@ -51,12 +54,15 @@ function shots_update(dt)
         var shot = shots[i]
         var prevPos = shot.position
         shot.position = shot.position.add(shot.velocity.mul(dt))
-        if (shot.life > 1.7)
+        if (shot.doSmoke)
         {
-            var step = Math.max(0.3, (2 - shot.life) * 10)
-            for (var j = step; j <= 1; j += step)
+            if (shot.life > shot.realLife - 0.3)
             {
-                smoke_create(Vector3.lerp(prevPos, shot.position, j))
+                var step = Math.max(0.3, (shot.realLife - shot.life) * 10)
+                for (var j = step; j <= 1; j += step)
+                {
+                    smoke_create(Vector3.lerp(prevPos, shot.position, j))
+                }
             }
         }
 
@@ -71,11 +77,9 @@ function shots_update(dt)
             --i
             len = shots.length
             smoke_create(shot.position.add(new Vector3(0, 0, 0.1)))
-            setTimeout(function(){smoke_create(shot.position.add(new Vector3(0, 0, 0.15)), 2)}, 20)
-            setTimeout(function(){smoke_create(shot.position.add(new Vector3(0, 0, 0.20)), 2.5)}, 40)
-            setTimeout(function(){smoke_create(shot.position.add(new Vector3(0, 0, 0.25)), 3)}, 60)
-            setTimeout(function(){smoke_create(shot.position.add(new Vector3(0, 0, 0.30)), 3.5)}, 80)
-            setTimeout(function(){smoke_create(shot.position.add(new Vector3(0, 0, 0.35)), 4)}, 100)
+            smoke_create(shot.position.add(new Vector3(0, 0, 0.15)))
+            smoke_create(shot.position.add(new Vector3(0, 0, 0.20)))
+            smoke_create(shot.position.add(new Vector3(0, 0, 0.25)))
             continue
         }
 
@@ -88,6 +92,19 @@ function shots_update(dt)
             shots.splice(i, 1)
             --i
             len = shots.length
+        }
+
+        // Test collision with entities
+        if (Vector3.distanceSquared(shot.position, plane.position) <= 0.25)
+        {
+            shots.splice(i, 1)
+            --i
+            len = shots.length
+
+            // Dmg
+            plane.life -= 1
+            camera_shake(0.1)
+            if (plane.life <= 0) plane_crash()
         }
     }
 }
