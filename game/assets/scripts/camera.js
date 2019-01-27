@@ -34,7 +34,7 @@ function camera_update(dt)
     var targetUpTarget = targetPosition.add(planeUp)
     if (plane.dead)
     {
-        angle += dt * Math.PI / 2.5
+        angle += dt * Math.PI / 6
         targetPosition = new Vector3(plane.position.x + Math.cos(angle) * 3, plane.position.y + Math.sin(angle) * 3, plane.position.z + 3)
         targetTarget = planePos
         targetUpTarget = targetPosition.add(new Vector3(0, 0, 1))

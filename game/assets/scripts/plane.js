@@ -185,12 +185,12 @@ function plane_init()
         -PLANE_HULL_WIDTH / 2, PLANE_LENGTH / 2 * 0.85, -PLANE_HULL_WIDTH / 4, 0, 0, 1, hullU, hullV,
 
         // Left wing
-        -PLANE_WIDTH / 2, PLANE_LENGTH / 2 * 0.85, 0, 0, 0, 1, hullU, hullV,
-        -PLANE_WIDTH / 2, PLANE_LENGTH / 2 * 0.45, 0, 0, 0, 1, hullU, hullV,
-        -PLANE_HULL_WIDTH / 2 - PLANE_DROP, PLANE_LENGTH / 2 * 0.25, -PLANE_HULL_WIDTH / 4 - PLANE_DROP / 2, 0, 0, 1, hullU, hullV,
-        -PLANE_WIDTH / 2, PLANE_LENGTH / 2 * 0.85, 0, 0, 0, 1, hullU, hullV,
-        -PLANE_HULL_WIDTH / 2 - PLANE_DROP, PLANE_LENGTH / 2 * 0.25, -PLANE_HULL_WIDTH / 4 - PLANE_DROP / 2, 0, 0, 1, hullU, hullV,
-        -PLANE_HULL_WIDTH / 2 - PLANE_DROP, PLANE_LENGTH / 2 * 0.85, -PLANE_HULL_WIDTH / 4 - PLANE_DROP / 2, 0, 0, 1, hullU, hullV,
+        -PLANE_WIDTH / 2, PLANE_LENGTH / 2 * 0.85, 0, 0, 0, 1, 64 / 100, 95 / 100,
+        -PLANE_WIDTH / 2, PLANE_LENGTH / 2 * 0.45, 0, 0, 0, 1, 85 / 100, 95 / 100,
+        -PLANE_HULL_WIDTH / 2 - PLANE_DROP, PLANE_LENGTH / 2 * 0.25, -PLANE_HULL_WIDTH / 4 - PLANE_DROP / 2, 0, 0, 1, 95 / 100, 29 / 100,
+        -PLANE_WIDTH / 2, PLANE_LENGTH / 2 * 0.85, 0, 0, 0, 1, 64 / 100, 95 / 100,
+        -PLANE_HULL_WIDTH / 2 - PLANE_DROP, PLANE_LENGTH / 2 * 0.25, -PLANE_HULL_WIDTH / 4 - PLANE_DROP / 2, 0, 0, 1, 95 / 100, 29 / 100,
+        -PLANE_HULL_WIDTH / 2 - PLANE_DROP, PLANE_LENGTH / 2 * 0.85, -PLANE_HULL_WIDTH / 4 - PLANE_DROP / 2, 0, 0, 1, 64 / 100, 29 / 100,
     ]
 
     mirrorVertices(verts)

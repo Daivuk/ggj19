@@ -24,10 +24,10 @@ function carrier_init()
 {
     var trimU = 16/100
     var trimV = 76/100
-    var keelU = 81/100
-    var keelV = 76/100
-    var towerU = 81/100
-    var towerV = 76/100
+    var keelU = 0/100
+    var keelV = 0/100
+    var towerU = 0/100
+    var towerV = 0/100
 
     var verts = [
         // Deck top
