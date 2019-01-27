@@ -1,10 +1,10 @@
 var tent_TEXTURE = getTexture("carrier.png")
-var TENT_SIZE = 0.8
+var TENT_SIZE = 0.6
 var tent_LIFE = 3
 
 var TENT_WIDTH = 0.8
 var TENT_LENGTH = 1
-var TENT_HEIGHT = 1
+var TENT_HEIGHT = 0.6
 
 var tents = []
 
